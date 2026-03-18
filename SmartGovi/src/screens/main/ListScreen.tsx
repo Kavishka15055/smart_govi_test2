@@ -7,12 +7,12 @@ import {
 } from 'react-native';
 import { COLORS, FONTS } from '../../utils/constants';
 
-const ProfileScreen: React.FC = () => {
+const ListScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Profile</Text>
-        <Text style={styles.subtitle}>Coming Soon in Phase 7</Text>
+        <Text style={styles.title}>Transaction History</Text>
+        <Text style={styles.subtitle}>Coming Soon in Phase 5</Text>
       </View>
     </SafeAreaView>
   );
@@ -41,4 +41,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileScreen;
+export default ListScreen;
