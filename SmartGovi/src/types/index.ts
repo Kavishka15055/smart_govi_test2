@@ -182,3 +182,130 @@ export const FARM_TYPE_OPTIONS: FarmTypeOption[] = [
   { id: 'poultry', label: 'Poultry', icon: '🐔', emoji: '🍐' },
   { id: 'other', label: 'Other', icon: '🌱', emoji: '🍏' },
 ];
+
+
+// Transaction types
+export interface BaseTransaction {
+  id: string;
+  userId: string;
+  date: Date;
+  categoryId: string;
+  categoryName: string;
+  amount: number;
+  notes?: string;
+  createdAt: Date;
+}
+
+export interface IncomeTransaction extends BaseTransaction {
+  type: 'income';
+  quantity: number;
+  unit: string;
+}
+
+export interface ExpenseTransaction extends BaseTransaction {
+  type: 'expense';
+  receiptUrl?: string;
+}
+
+export type Transaction = IncomeTransaction | ExpenseTransaction;
+
+// Dashboard summary
+export interface DashboardSummary {
+  totalIncome: number;
+  totalExpense: number;
+  balance: number;
+  periodStart: Date;
+  periodEnd: Date;
+  comparison?: {
+    incomeChange: number; // percentage
+    expenseChange: number; // percentage
+    balanceChange: number; // percentage
+  };
+}
+
+// Filter types
+export type DateRangeType = 'today' | 'week' | 'month' | '3months' | 'custom';
+
+export interface DateRange {
+  startDate: Date;
+  endDate: Date;
+  label: string;
+}
+
+export interface FilterOptions {
+  range: DateRangeType;
+  customStartDate?: Date;
+  customEndDate?: Date;
+  categoryId?: string;
+  type?: 'income' | 'expense' | 'all';
+}
+
+// Quick action types
+export interface QuickAction {
+  id: string;
+  title: string;
+  icon: string;
+  color: string;
+  route: string;
+}
+
+// Recent transaction display
+export interface RecentTransactionDisplay {
+  id: string;
+  type: 'income' | 'expense';
+  categoryName: string;
+  amount: number;
+  date: Date;
+  quantity?: number;
+  unit?: string;
+  notes?: string;
+}
+
+// Navigation params for main tabs
+export type MainTabParamList = {
+  Home: undefined;
+  Stats: undefined;
+  List: undefined;
+  Profile: undefined;
+};
+
+export type DashboardStackParamList = {
+  DashboardMain: undefined;
+  AddIncome: undefined;
+  AddExpense: undefined;
+  Report: { range?: DateRangeType };
+  History: undefined;
+  TransactionDetail: { transactionId: string; type: 'income' | 'expense' };
+};
+
+// Constants
+export const QUICK_ACTIONS: QuickAction[] = [
+  {
+    id: 'income',
+    title: 'Income',
+    icon: '💰',
+    color: '#4CAF50',
+    route: 'AddIncome',
+  },
+  {
+    id: 'expense',
+    title: 'Expense',
+    icon: '💸',
+    color: '#F44336',
+    route: 'AddExpense',
+  },
+  {
+    id: 'report',
+    title: 'Report',
+    icon: '📊',
+    color: '#2196F3',
+    route: 'Report',
+  },
+  {
+    id: 'history',
+    title: 'History',
+    icon: '📄',
+    color: '#FF9800',
+    route: 'History',
+  },
+];

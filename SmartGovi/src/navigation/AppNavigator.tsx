@@ -1,23 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../context/AuthContext';
 import { RootStackParamList } from '../types';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import { farmService } from '../services/farmService';
 
 // Import navigators
 import AuthStack from './AuthStack';
 import FarmSetupStack from './FarmSetupStack';
-
-// Placeholder for MainStack (will be created in next phase)
-const MainStack = () => null;
+import MainTabNavigator from './MainTabNavigator';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator: React.FC = () => {
   const { user, isLoading } = useAuth();
+  const [isCheckingSetup, setIsCheckingSetup] = useState(true);
+  const [farmSetupComplete, setFarmSetupComplete] = useState(false);
 
-  if (isLoading) {
+  useEffect(() => {
+    const checkFarmSetup = async () => {
+      if (user) {
+        try {
+          const completed = await farmService.checkFarmSetupComplete(user.id);
+          setFarmSetupComplete(completed);
+        } catch (error) {
+          console.error('Error checking farm setup:', error);
+          setFarmSetupComplete(false);
+        } finally {
+          setIsCheckingSetup(false);
+        }
+      } else {
+        setIsCheckingSetup(false);
+      }
+    };
+
+    checkFarmSetup();
+  }, [user]);
+
+  if (isLoading || isCheckingSetup) {
     return <LoadingSpinner fullScreen message="Loading..." />;
   }
 
@@ -26,14 +47,10 @@ const AppNavigator: React.FC = () => {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!user ? (
           <Stack.Screen name="Auth" component={AuthStack} />
+        ) : !farmSetupComplete ? (
+          <Stack.Screen name="FarmSetup" component={FarmSetupStack} />
         ) : (
-          // User is logged in - check if farm setup is complete
-          // For now, we'll check a flag - you'll need to implement this
-          // based on your user data
-          <>
-            <Stack.Screen name="FarmSetup" component={FarmSetupStack} />
-            <Stack.Screen name="Main" component={MainStack} />
-          </>
+          <Stack.Screen name="Main" component={MainTabNavigator} />
         )}
       </Stack.Navigator>
     </NavigationContainer>
