@@ -264,7 +264,7 @@ export interface RecentTransactionDisplay {
 // Navigation params for main tabs
 export type MainTabParamList = {
   Home: undefined;
-  Stats: undefined;
+  ReportTab: undefined;
   List: undefined;
   Profile: undefined;
 };
