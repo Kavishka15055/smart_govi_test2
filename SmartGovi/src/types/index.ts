@@ -362,3 +362,60 @@ export interface SuccessModalProps {
   onViewHistory: () => void;
   onAddAnother: () => void;
 }
+
+
+// Transaction history types
+export interface GroupedTransactions {
+  title: string; // "Today", "Yesterday", "March 5, 2026"
+  data: TransactionDisplay[];
+}
+
+export interface TransactionDisplay {
+  id: string;
+  type: 'income' | 'expense';
+  categoryName: string;
+  amount: number;
+  date: Date;
+  quantity?: number;
+  unit?: string;
+  notes?: string;
+  receiptUrl?: string;
+}
+
+export interface TransactionFilter {
+  type: 'all' | 'income' | 'expense';
+  startDate?: Date;
+  endDate?: Date;
+  categoryId?: string;
+  searchQuery: string;
+}
+
+export interface TransactionSort {
+  field: 'date' | 'amount' | 'category';
+  direction: 'asc' | 'desc';
+}
+
+// Transaction detail modal props
+export interface TransactionDetailProps {
+  visible: boolean;
+  transaction: TransactionDisplay | null;
+  onClose: () => void;
+  onEdit: (transaction: TransactionDisplay) => void;
+  onDelete: (transactionId: string, type: 'income' | 'expense') => void;
+}
+
+// Filter chip types
+export interface FilterChip {
+  id: string;
+  label: string;
+  icon: string;
+  selected: boolean;
+}
+
+// Pagination
+export interface PaginationState {
+  page: number;
+  limit: number;
+  hasMore: boolean;
+  total: number;
+}
