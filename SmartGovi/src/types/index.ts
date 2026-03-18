@@ -216,6 +216,8 @@ export interface DashboardSummary {
   balance: number;
   periodStart: Date;
   periodEnd: Date;
+  incomeCount?: number;
+  expenseCount?: number;
   comparison?: {
     incomeChange: number; // percentage
     expenseChange: number; // percentage

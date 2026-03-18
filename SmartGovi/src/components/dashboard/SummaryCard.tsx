@@ -7,6 +7,8 @@ interface SummaryCardProps {
   expense: number;
   balance: number;
   periodLabel: string;
+  incomeCount?: number;
+  expenseCount?: number;
 }
 
 const SummaryCard: React.FC<SummaryCardProps> = ({
@@ -14,6 +16,8 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   expense,
   balance,
   periodLabel,
+  incomeCount,
+  expenseCount,
 }) => {
   const formatCurrency = (amount: number) => {
     return `Rs ${amount.toLocaleString('en-LK')}`;
@@ -30,17 +34,23 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
         <View style={styles.leftColumn}>
           <Text style={styles.label}>Income</Text>
           <View style={styles.valueContainer}>
-            <Text style={styles.value}>{formatCurrency(income)}</Text>
+            <Text style={[styles.value, { color: COLORS.success }]}>{formatCurrency(income)}</Text>
             <View style={[styles.indicator, styles.incomeIndicator]} />
           </View>
+          {incomeCount !== undefined && (
+            <Text style={styles.countLabel}>{incomeCount} transactions</Text>
+          )}
         </View>
 
         <View style={styles.rightColumn}>
           <Text style={styles.label}>Expense</Text>
           <View style={styles.valueContainer}>
-            <Text style={styles.value}>{formatCurrency(expense)}</Text>
+            <Text style={[styles.value, { color: COLORS.error }]}>{formatCurrency(expense)}</Text>
             <View style={[styles.indicator, styles.expenseIndicator]} />
           </View>
+          {expenseCount !== undefined && (
+            <Text style={styles.countLabel}>{expenseCount} transactions</Text>
+          )}
         </View>
       </View>
 
@@ -181,6 +191,12 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: '100%',
+  },
+  countLabel: {
+    fontFamily: FONTS.regular,
+    fontSize: FONTS.sizes.small - 2,
+    color: COLORS.text.secondary,
+    marginTop: 2,
   },
 });
 

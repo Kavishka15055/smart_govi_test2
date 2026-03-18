@@ -97,6 +97,8 @@ const ReportScreen: React.FC = () => {
               expense={summary.totalExpense}
               balance={summary.balance}
               periodLabel={dateRangeLabel}
+              incomeCount={summary.incomeCount}
+              expenseCount={summary.expenseCount}
             />
           )}
 

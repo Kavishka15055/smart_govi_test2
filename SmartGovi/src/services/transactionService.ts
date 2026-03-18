@@ -204,6 +204,8 @@ class TransactionService {
         balance: totalIncome - totalExpense,
         periodStart: startDate,
         periodEnd: endDate,
+        incomeCount: income.length,
+        expenseCount: expenses.length,
       };
     } catch (error) {
       console.error('Error getting dashboard summary:', error);
