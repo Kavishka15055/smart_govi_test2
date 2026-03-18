@@ -210,6 +210,13 @@ export interface ExpenseTransaction extends BaseTransaction {
 export type Transaction = IncomeTransaction | ExpenseTransaction;
 
 // Dashboard summary
+export interface CategoryBreakdown {
+  categoryName: string;
+  amount: number;
+  count: number;
+  percentage: number;
+}
+
 export interface DashboardSummary {
   totalIncome: number;
   totalExpense: number;
@@ -218,6 +225,7 @@ export interface DashboardSummary {
   periodEnd: Date;
   incomeCount?: number;
   expenseCount?: number;
+  incomeBreakdown?: CategoryBreakdown[];
   comparison?: {
     incomeChange: number; // percentage
     expenseChange: number; // percentage

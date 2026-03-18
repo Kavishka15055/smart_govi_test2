@@ -15,6 +15,7 @@ import { useAuth } from '../../context/AuthContext';
 import { dashboardService } from '../../services/dashboardService';
 import { DashboardSummary, DateRangeType } from '../../types';
 import SummaryCard from '../../components/dashboard/SummaryCard';
+import CategoryBreakdownCard from '../../components/dashboard/CategoryBreakdownCard';
 import RecentTransactionItem from '../../components/dashboard/RecentTransactionItem';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import EmptyState from '../../components/common/EmptyState';
@@ -99,6 +100,14 @@ const ReportScreen: React.FC = () => {
               periodLabel={dateRangeLabel}
               incomeCount={summary.incomeCount}
               expenseCount={summary.expenseCount}
+            />
+          )}
+
+          {summary && summary.incomeBreakdown && (
+            <CategoryBreakdownCard 
+              title="INCOME BREAKDOWN" 
+              data={summary.incomeBreakdown} 
+              color={COLORS.success} 
             />
           )}
 

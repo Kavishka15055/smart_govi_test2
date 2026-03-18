@@ -22,6 +22,7 @@ import {
   FilterOptions,
   DashboardSummary,
   RecentTransactionDisplay,
+  CategoryBreakdown,
 } from '../types';
 
 class TransactionService {
@@ -198,6 +199,24 @@ class TransactionService {
       const totalIncome = income.reduce((sum, item) => sum + item.amount, 0);
       const totalExpense = expenses.reduce((sum, item) => sum + item.amount, 0);
 
+      const incomeCategories = new Map<string, { amount: number; count: number }>();
+      income.forEach(item => {
+        const current = incomeCategories.get(item.categoryName) || { amount: 0, count: 0 };
+        incomeCategories.set(item.categoryName, {
+          amount: current.amount + item.amount,
+          count: current.count + 1
+        });
+      });
+
+      const incomeBreakdown: CategoryBreakdown[] = Array.from(incomeCategories.entries())
+        .map(([categoryName, data]) => ({
+          categoryName,
+          amount: data.amount,
+          count: data.count,
+          percentage: totalIncome > 0 ? (data.amount / totalIncome) * 100 : 0
+        }))
+        .sort((a, b) => b.amount - a.amount);
+
       return {
         totalIncome,
         totalExpense,
@@ -206,6 +225,7 @@ class TransactionService {
         periodEnd: endDate,
         incomeCount: income.length,
         expenseCount: expenses.length,
+        incomeBreakdown,
       };
     } catch (error) {
       console.error('Error getting dashboard summary:', error);
