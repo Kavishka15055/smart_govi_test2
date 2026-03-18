@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MainTabParamList } from '../types';
+import { createStackNavigator } from '@react-navigation/stack';
+import { MainTabParamList, DashboardStackParamList } from '../types';
 import { COLORS, FONTS } from '../utils/constants';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -9,6 +10,21 @@ import DashboardScreen from '../screens/main/DashboardScreen';
 import StatsScreen from '../screens/main/StatsScreen';
 import ListScreen from '../screens/main/ListScreen';
 import ProfileScreen from '../screens/main/ProfileScreen';
+import AddIncomeScreen from '../screens/main/AddIncomeScreen';
+import AddExpenseScreen from '../screens/main/AddExpenseScreen';
+
+// Create stack for dashboard-related screens
+const DashboardStack = createStackNavigator<DashboardStackParamList>();
+
+const DashboardStackNavigator = () => {
+  return (
+    <DashboardStack.Navigator screenOptions={{ headerShown: false }}>
+      <DashboardStack.Screen name="DashboardMain" component={DashboardScreen} />
+      <DashboardStack.Screen name="AddIncome" component={AddIncomeScreen} />
+      <DashboardStack.Screen name="AddExpense" component={AddExpenseScreen} />
+    </DashboardStack.Navigator>
+  );
+};
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -35,7 +51,7 @@ const MainTabNavigator: React.FC = () => {
     >
       <Tab.Screen
         name="Home"
-        component={DashboardScreen}
+        component={DashboardStackNavigator}
         options={{
           tabBarLabel: 'Home',
           tabBarIcon: ({ color, size }) => (
