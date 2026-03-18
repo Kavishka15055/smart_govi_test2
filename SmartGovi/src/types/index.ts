@@ -192,7 +192,7 @@ export interface BaseTransaction {
   categoryId: string;
   categoryName: string;
   amount: number;
-  notes?: string;
+  notes?: string | null;
   createdAt: Date;
 }
 
@@ -204,7 +204,7 @@ export interface IncomeTransaction extends BaseTransaction {
 
 export interface ExpenseTransaction extends BaseTransaction {
   type: 'expense';
-  receiptUrl?: string;
+  receiptUrl?: string | null;
 }
 
 export type Transaction = IncomeTransaction | ExpenseTransaction;
@@ -258,7 +258,7 @@ export interface RecentTransactionDisplay {
   date: Date;
   quantity?: number;
   unit?: string;
-  notes?: string;
+  notes?: string | null;
 }
 
 // Navigation params for main tabs
@@ -309,3 +309,56 @@ export const QUICK_ACTIONS: QuickAction[] = [
     route: 'History',
   },
 ];
+
+
+// Form data types for transactions
+export interface IncomeFormData {
+  date: Date;
+  categoryId: string;
+  categoryName: string;
+  quantity: string;
+  unit: string;
+  amount: string;
+  notes: string;
+}
+
+export interface ExpenseFormData {
+  date: Date;
+  categoryId: string;
+  categoryName: string;
+  amount: string;
+  notes: string;
+  receipt?: {
+    uri: string;
+    fileName: string;
+    fileSize: number;
+  };
+}
+
+export interface FormErrors {
+  [key: string]: string;
+}
+
+// Category types for picker
+export interface PickerCategory {
+  id: string;
+  name: string;
+  defaultUnit?: string;
+}
+
+// Validation result
+export interface ValidationResult {
+  isValid: boolean;
+  errors: FormErrors;
+}
+
+// Success modal props
+export interface SuccessModalProps {
+  visible: boolean;
+  type: 'income' | 'expense';
+  amount: number;
+  categoryName: string;
+  onClose: () => void;
+  onViewHistory: () => void;
+  onAddAnother: () => void;
+}
