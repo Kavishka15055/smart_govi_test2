@@ -111,6 +111,14 @@ const ReportScreen: React.FC = () => {
             />
           )}
 
+          {summary && summary.expenseBreakdown && (
+            <CategoryBreakdownCard 
+              title="EXPENSE BREAKDOWN" 
+              data={summary.expenseBreakdown} 
+              color={COLORS.error} 
+            />
+          )}
+
           <View style={styles.recentSection}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>REPORT TRANSACTIONS</Text>

@@ -226,6 +226,7 @@ export interface DashboardSummary {
   incomeCount?: number;
   expenseCount?: number;
   incomeBreakdown?: CategoryBreakdown[];
+  expenseBreakdown?: CategoryBreakdown[];
   comparison?: {
     incomeChange: number; // percentage
     expenseChange: number; // percentage

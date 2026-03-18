@@ -217,6 +217,24 @@ class TransactionService {
         }))
         .sort((a, b) => b.amount - a.amount);
 
+      const expenseCategories = new Map<string, { amount: number; count: number }>();
+      expenses.forEach(item => {
+        const current = expenseCategories.get(item.categoryName) || { amount: 0, count: 0 };
+        expenseCategories.set(item.categoryName, {
+          amount: current.amount + item.amount,
+          count: current.count + 1
+        });
+      });
+
+      const expenseBreakdown: CategoryBreakdown[] = Array.from(expenseCategories.entries())
+        .map(([categoryName, data]) => ({
+          categoryName,
+          amount: data.amount,
+          count: data.count,
+          percentage: totalExpense > 0 ? (data.amount / totalExpense) * 100 : 0
+        }))
+        .sort((a, b) => b.amount - a.amount);
+
       return {
         totalIncome,
         totalExpense,
@@ -226,6 +244,7 @@ class TransactionService {
         incomeCount: income.length,
         expenseCount: expenses.length,
         incomeBreakdown,
+        expenseBreakdown,
       };
     } catch (error) {
       console.error('Error getting dashboard summary:', error);
