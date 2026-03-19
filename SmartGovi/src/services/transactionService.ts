@@ -14,6 +14,15 @@ import {
   startAt,
   endAt,
 } from 'firebase/firestore';
+import { 
+  format, 
+  startOfMonth, 
+  endOfMonth, 
+  eachMonthOfInterval, 
+  isSameMonth, 
+  subMonths,
+  differenceInDays
+} from 'date-fns';
 import {
   IncomeTransaction,
   ExpenseTransaction,
@@ -235,6 +244,53 @@ class TransactionService {
         }))
         .sort((a, b) => b.amount - a.amount);
 
+      // Monthly Comparison Calculation
+      let monthlyComparison: MonthlyData[] | undefined = undefined;
+      const daysDiff = differenceInDays(endDate, startDate);
+
+      if (daysDiff > 27) {
+        const months = eachMonthOfInterval({
+          start: startDate,
+          end: endDate,
+        });
+
+        monthlyComparison = months.map((monthDate) => {
+          const monthIncome = income
+            .filter(item => isSameMonth(item.date, monthDate))
+            .reduce((sum, item) => sum + item.amount, 0);
+          
+          const monthExpense = expenses
+            .filter(item => isSameMonth(item.date, monthDate))
+            .reduce((sum, item) => sum + item.amount, 0);
+
+          return {
+            month: format(monthDate, 'MMM'),
+            year: monthDate.getFullYear(),
+            income: monthIncome,
+            expense: monthExpense,
+            balance: monthIncome - monthExpense,
+          };
+        });
+
+        // Calculate percentage changes
+        for (let i = 1; i < monthlyComparison.length; i++) {
+          const prev = monthlyComparison[i - 1];
+          const curr = monthlyComparison[i];
+
+          if (prev.income > 0) {
+            curr.incomeChange = ((curr.income - prev.income) / prev.income) * 100;
+          } else if (curr.income > 0) {
+            curr.incomeChange = 100;
+          }
+
+          if (prev.expense > 0) {
+            curr.expenseChange = ((curr.expense - prev.expense) / prev.expense) * 100;
+          } else if (curr.expense > 0) {
+            curr.expenseChange = 100;
+          }
+        }
+      }
+
       return {
         totalIncome,
         totalExpense,
@@ -245,6 +301,7 @@ class TransactionService {
         expenseCount: expenses.length,
         incomeBreakdown,
         expenseBreakdown,
+        monthlyComparison,
       };
     } catch (error) {
       console.error('Error getting dashboard summary:', error);

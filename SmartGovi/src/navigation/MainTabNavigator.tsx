@@ -12,6 +12,7 @@ import HistoryScreen from '../screens/main/HistoryScreen'; // Changed from ListS
 import ProfileScreen from '../screens/main/ProfileScreen';
 import AddIncomeScreen from '../screens/main/AddIncomeScreen';
 import AddExpenseScreen from '../screens/main/AddExpenseScreen';
+import SettingsScreen from '../screens/main/SettingsScreen';
 
 // Create stack for dashboard-related screens
 const DashboardStack = createStackNavigator<DashboardStackParamList>();
@@ -23,6 +24,7 @@ const DashboardStackNavigator = () => {
       <DashboardStack.Screen name="AddIncome" component={AddIncomeScreen} />
       <DashboardStack.Screen name="AddExpense" component={AddExpenseScreen} />
       <DashboardStack.Screen name="Report" component={ReportScreen} />
+      <DashboardStack.Screen name="Settings" component={SettingsScreen} />
     </DashboardStack.Navigator>
   );
 };

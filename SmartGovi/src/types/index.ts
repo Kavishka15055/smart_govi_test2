@@ -217,6 +217,16 @@ export interface CategoryBreakdown {
   percentage: number;
 }
 
+export interface MonthlyData {
+  month: string;
+  year: number;
+  income: number;
+  expense: number;
+  balance: number;
+  incomeChange?: number;
+  expenseChange?: number;
+}
+
 export interface DashboardSummary {
   totalIncome: number;
   totalExpense: number;
@@ -232,6 +242,7 @@ export interface DashboardSummary {
     expenseChange: number; // percentage
     balanceChange: number; // percentage
   };
+  monthlyComparison?: MonthlyData[];
 }
 
 // Filter types
@@ -287,6 +298,7 @@ export type DashboardStackParamList = {
   Report: { range?: DateRangeType };
   History: undefined;
   TransactionDetail: { transactionId: string; type: 'income' | 'expense' };
+  Settings: undefined;
 };
 
 // Constants

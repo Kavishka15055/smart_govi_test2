@@ -22,11 +22,14 @@ import FilterModal from '../modals/FilterModal';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import EmptyState from '../../components/common/EmptyState';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useSettings } from '../../context/SettingsContext';
+import MonthlyComparisonCard from '../../components/dashboard/MonthlyComparisonCard';
 
 const ReportScreen: React.FC = () => {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { user } = useAuth();
+  const { settings } = useSettings();
   
   // Quick action from dashboard passes `range` in params
   const initialRange: DateRangeType = route.params?.range || '3months';
@@ -102,6 +105,12 @@ const ReportScreen: React.FC = () => {
           <MaterialIcons name="filter-list" size={24} color={COLORS.primary} />
           <Text style={styles.filterButtonText}>Filter</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.settingsButton}
+          onPress={() => navigation.navigate('Settings')}
+        >
+          <MaterialIcons name="settings" size={24} color={COLORS.text.secondary} />
+        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -120,6 +129,10 @@ const ReportScreen: React.FC = () => {
               incomeCount={summary.incomeCount}
               expenseCount={summary.expenseCount}
             />
+          )}
+
+          {settings.showMonthlyComparison && summary && summary.monthlyComparison && (
+            <MonthlyComparisonCard data={summary.monthlyComparison} />
           )}
 
           {summary && summary.incomeBreakdown && (
@@ -238,6 +251,10 @@ const styles = StyleSheet.create({
     fontSize: FONTS.sizes.small,
     color: COLORS.primary,
     marginLeft: 4,
+  },
+  settingsButton: {
+    padding: 8,
+    marginLeft: 8,
   },
   content: {
     paddingTop: 8,
