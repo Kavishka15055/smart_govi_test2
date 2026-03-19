@@ -16,6 +16,7 @@ import { dashboardService } from '../../services/dashboardService';
 import { DashboardSummary, DateRangeType } from '../../types';
 import SummaryCard from '../../components/dashboard/SummaryCard';
 import CategoryBreakdownCard from '../../components/dashboard/CategoryBreakdownCard';
+import FinancialPieChart from '../../components/dashboard/FinancialPieChart';
 import RecentTransactionItem from '../../components/dashboard/RecentTransactionItem';
 import FilterModal from '../modals/FilterModal';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
@@ -118,6 +119,22 @@ const ReportScreen: React.FC = () => {
               periodLabel={dateRangeLabel}
               incomeCount={summary.incomeCount}
               expenseCount={summary.expenseCount}
+            />
+          )}
+
+          {summary && summary.incomeBreakdown && (
+            <FinancialPieChart
+              title="INCOME DISTRIBUTION"
+              data={summary.incomeBreakdown}
+              type="income"
+            />
+          )}
+
+          {summary && summary.expenseBreakdown && (
+            <FinancialPieChart
+              title="EXPENSE DISTRIBUTION"
+              data={summary.expenseBreakdown}
+              type="expense"
             />
           )}
 
