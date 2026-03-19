@@ -7,11 +7,12 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 // Import screens
 import DashboardScreen from '../screens/main/DashboardScreen';
-import StatsScreen from '../screens/main/StatsScreen';
+import ReportScreen from '../screens/main/ReportScreen';
 import HistoryScreen from '../screens/main/HistoryScreen'; // Changed from ListScreen
 import ProfileScreen from '../screens/main/ProfileScreen';
 import AddIncomeScreen from '../screens/main/AddIncomeScreen';
 import AddExpenseScreen from '../screens/main/AddExpenseScreen';
+import SettingsScreen from '../screens/main/SettingsScreen';
 
 // Create stack for dashboard-related screens
 const DashboardStack = createStackNavigator<DashboardStackParamList>();
@@ -22,6 +23,8 @@ const DashboardStackNavigator = () => {
       <DashboardStack.Screen name="DashboardMain" component={DashboardScreen} />
       <DashboardStack.Screen name="AddIncome" component={AddIncomeScreen} />
       <DashboardStack.Screen name="AddExpense" component={AddExpenseScreen} />
+      <DashboardStack.Screen name="Report" component={ReportScreen} />
+      <DashboardStack.Screen name="Settings" component={SettingsScreen} />
     </DashboardStack.Navigator>
   );
 };
@@ -61,10 +64,10 @@ const MainTabNavigator: React.FC = () => {
       />
       
       <Tab.Screen
-        name="Stats"
-        component={StatsScreen}
+        name="ReportTab"
+        component={ReportScreen}
         options={{
-          tabBarLabel: 'Stats',
+          tabBarLabel: 'Reports',
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="bar-chart" size={size} color={color} />
           ),

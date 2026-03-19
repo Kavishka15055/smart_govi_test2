@@ -14,6 +14,15 @@ import {
   startAt,
   endAt,
 } from 'firebase/firestore';
+import { 
+  format, 
+  startOfMonth, 
+  endOfMonth, 
+  eachMonthOfInterval, 
+  isSameMonth, 
+  subMonths,
+  differenceInDays
+} from 'date-fns';
 import {
   IncomeTransaction,
   ExpenseTransaction,
@@ -22,6 +31,7 @@ import {
   FilterOptions,
   DashboardSummary,
   RecentTransactionDisplay,
+  CategoryBreakdown,
 } from '../types';
 
 class TransactionService {
@@ -198,12 +208,100 @@ class TransactionService {
       const totalIncome = income.reduce((sum, item) => sum + item.amount, 0);
       const totalExpense = expenses.reduce((sum, item) => sum + item.amount, 0);
 
+      const incomeCategories = new Map<string, { amount: number; count: number }>();
+      income.forEach(item => {
+        const current = incomeCategories.get(item.categoryName) || { amount: 0, count: 0 };
+        incomeCategories.set(item.categoryName, {
+          amount: current.amount + item.amount,
+          count: current.count + 1
+        });
+      });
+
+      const incomeBreakdown: CategoryBreakdown[] = Array.from(incomeCategories.entries())
+        .map(([categoryName, data]) => ({
+          categoryName,
+          amount: data.amount,
+          count: data.count,
+          percentage: totalIncome > 0 ? (data.amount / totalIncome) * 100 : 0
+        }))
+        .sort((a, b) => b.amount - a.amount);
+
+      const expenseCategories = new Map<string, { amount: number; count: number }>();
+      expenses.forEach(item => {
+        const current = expenseCategories.get(item.categoryName) || { amount: 0, count: 0 };
+        expenseCategories.set(item.categoryName, {
+          amount: current.amount + item.amount,
+          count: current.count + 1
+        });
+      });
+
+      const expenseBreakdown: CategoryBreakdown[] = Array.from(expenseCategories.entries())
+        .map(([categoryName, data]) => ({
+          categoryName,
+          amount: data.amount,
+          count: data.count,
+          percentage: totalExpense > 0 ? (data.amount / totalExpense) * 100 : 0
+        }))
+        .sort((a, b) => b.amount - a.amount);
+
+      // Monthly Comparison Calculation
+      let monthlyComparison: MonthlyData[] | undefined = undefined;
+      const daysDiff = differenceInDays(endDate, startDate);
+
+      if (daysDiff > 27) {
+        const months = eachMonthOfInterval({
+          start: startDate,
+          end: endDate,
+        });
+
+        monthlyComparison = months.map((monthDate) => {
+          const monthIncome = income
+            .filter(item => isSameMonth(item.date, monthDate))
+            .reduce((sum, item) => sum + item.amount, 0);
+          
+          const monthExpense = expenses
+            .filter(item => isSameMonth(item.date, monthDate))
+            .reduce((sum, item) => sum + item.amount, 0);
+
+          return {
+            month: format(monthDate, 'MMM'),
+            year: monthDate.getFullYear(),
+            income: monthIncome,
+            expense: monthExpense,
+            balance: monthIncome - monthExpense,
+          };
+        });
+
+        // Calculate percentage changes
+        for (let i = 1; i < monthlyComparison.length; i++) {
+          const prev = monthlyComparison[i - 1];
+          const curr = monthlyComparison[i];
+
+          if (prev.income > 0) {
+            curr.incomeChange = ((curr.income - prev.income) / prev.income) * 100;
+          } else if (curr.income > 0) {
+            curr.incomeChange = 100;
+          }
+
+          if (prev.expense > 0) {
+            curr.expenseChange = ((curr.expense - prev.expense) / prev.expense) * 100;
+          } else if (curr.expense > 0) {
+            curr.expenseChange = 100;
+          }
+        }
+      }
+
       return {
         totalIncome,
         totalExpense,
         balance: totalIncome - totalExpense,
         periodStart: startDate,
         periodEnd: endDate,
+        incomeCount: income.length,
+        expenseCount: expenses.length,
+        incomeBreakdown,
+        expenseBreakdown,
+        monthlyComparison,
       };
     } catch (error) {
       console.error('Error getting dashboard summary:', error);

@@ -210,17 +210,39 @@ export interface ExpenseTransaction extends BaseTransaction {
 export type Transaction = IncomeTransaction | ExpenseTransaction;
 
 // Dashboard summary
+export interface CategoryBreakdown {
+  categoryName: string;
+  amount: number;
+  count: number;
+  percentage: number;
+}
+
+export interface MonthlyData {
+  month: string;
+  year: number;
+  income: number;
+  expense: number;
+  balance: number;
+  incomeChange?: number;
+  expenseChange?: number;
+}
+
 export interface DashboardSummary {
   totalIncome: number;
   totalExpense: number;
   balance: number;
   periodStart: Date;
   periodEnd: Date;
+  incomeCount?: number;
+  expenseCount?: number;
+  incomeBreakdown?: CategoryBreakdown[];
+  expenseBreakdown?: CategoryBreakdown[];
   comparison?: {
     incomeChange: number; // percentage
     expenseChange: number; // percentage
     balanceChange: number; // percentage
   };
+  monthlyComparison?: MonthlyData[];
 }
 
 // Filter types
@@ -264,7 +286,7 @@ export interface RecentTransactionDisplay {
 // Navigation params for main tabs
 export type MainTabParamList = {
   Home: undefined;
-  Stats: undefined;
+  ReportTab: undefined;
   List: undefined;
   Profile: undefined;
 };
@@ -276,6 +298,7 @@ export type DashboardStackParamList = {
   Report: { range?: DateRangeType };
   History: undefined;
   TransactionDetail: { transactionId: string; type: 'income' | 'expense' };
+  Settings: undefined;
 };
 
 // Constants
