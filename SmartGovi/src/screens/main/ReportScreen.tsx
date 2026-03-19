@@ -24,6 +24,7 @@ import EmptyState from '../../components/common/EmptyState';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useSettings } from '../../context/SettingsContext';
 import MonthlyComparisonCard from '../../components/dashboard/MonthlyComparisonCard';
+import { pdfService } from '../../services/pdfService';
 
 const ReportScreen: React.FC = () => {
   const navigation = useNavigation<any>();
@@ -41,6 +42,7 @@ const ReportScreen: React.FC = () => {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
   const [dateRangeLabel, setDateRangeLabel] = useState('');
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   const loadReportData = async (range: DateRangeType = currentRange, start?: Date, end?: Date) => {
     if (!user) return;
@@ -75,6 +77,23 @@ const ReportScreen: React.FC = () => {
       loadReportData(rangeType as DateRangeType, startDate, endDate);
     } else {
       loadReportData(rangeType as DateRangeType);
+    }
+  };
+
+  const handleSharePDF = async () => {
+    if (!summary || !user) return;
+
+    setPdfLoading(true);
+    try {
+      await pdfService.generateAndShareReport({
+        summary,
+        user,
+        dateRangeLabel,
+      });
+    } catch (error) {
+      Alert.alert('Error', 'Failed to generate PDF report');
+    } finally {
+      setPdfLoading(false);
     }
   };
 
@@ -193,6 +212,24 @@ const ReportScreen: React.FC = () => {
               ))
             )}
           </View>
+
+          {summary && (
+            <TouchableOpacity
+              style={[styles.pdfButton, pdfLoading && styles.pdfButtonDisabled]}
+              onPress={handleSharePDF}
+              disabled={pdfLoading}
+            >
+              {pdfLoading ? (
+                <LoadingSpinner size="small" color={COLORS.white} />
+              ) : (
+                <>
+                  <MaterialIcons name="share" size={20} color={COLORS.white} />
+                  <Text style={styles.pdfButtonText}>Share Report as PDF</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          )}
+
           <View style={styles.bottomPadding} />
         </View>
       </ScrollView>
@@ -275,7 +312,32 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   bottomPadding: {
-    height: 80,
+    height: 40,
+  },
+  pdfButton: {
+    backgroundColor: COLORS.primary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 16,
+    marginVertical: 24,
+    paddingVertical: 14,
+    borderRadius: 12,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  pdfButtonDisabled: {
+    opacity: 0.7,
+    backgroundColor: COLORS.disabled,
+  },
+  pdfButtonText: {
+    fontFamily: FONTS.bold,
+    fontSize: FONTS.sizes.medium,
+    color: COLORS.white,
+    marginLeft: 8,
   },
 });
 
