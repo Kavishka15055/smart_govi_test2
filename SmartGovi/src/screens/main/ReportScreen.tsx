@@ -17,6 +17,7 @@ import { DashboardSummary, DateRangeType } from '../../types';
 import SummaryCard from '../../components/dashboard/SummaryCard';
 import CategoryBreakdownCard from '../../components/dashboard/CategoryBreakdownCard';
 import RecentTransactionItem from '../../components/dashboard/RecentTransactionItem';
+import FilterModal from '../modals/FilterModal';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import EmptyState from '../../components/common/EmptyState';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -31,16 +32,17 @@ const ReportScreen: React.FC = () => {
 
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [currentRange, setCurrentRange] = useState<DateRangeType>(initialRange);
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
   const [dateRangeLabel, setDateRangeLabel] = useState('');
 
-  const loadReportData = async (range: DateRangeType = currentRange) => {
+  const loadReportData = async (range: DateRangeType = currentRange, start?: Date, end?: Date) => {
     if (!user) return;
 
     try {
-      const data = await dashboardService.getDashboardData(user.id, range);
+      const data = await dashboardService.getDashboardData(user.id, range, start, end);
       setSummary(data.summary);
       setRecentTransactions(data.recentTransactions || []);
       setDateRangeLabel(data.dateRange.label);
@@ -63,6 +65,15 @@ const ReportScreen: React.FC = () => {
     loadReportData();
   };
 
+  const handleFilterApply = (rangeType: string, startDate?: Date, endDate?: Date) => {
+    setCurrentRange(rangeType as DateRangeType);
+    if (rangeType === 'custom' && startDate && endDate) {
+      loadReportData(rangeType as DateRangeType, startDate, endDate);
+    } else {
+      loadReportData(rangeType as DateRangeType);
+    }
+  };
+
   if (loading) {
     return <LoadingSpinner fullScreen message="Generating Report..." />;
   }
@@ -83,6 +94,13 @@ const ReportScreen: React.FC = () => {
           <Text style={styles.headerTitle}>Reports</Text>
           <Text style={styles.headerDate}>{dateRangeLabel}</Text>
         </View>
+        <TouchableOpacity
+          style={styles.filterButton}
+          onPress={() => setFilterModalVisible(true)}
+        >
+          <MaterialIcons name="filter-list" size={24} color={COLORS.primary} />
+          <Text style={styles.filterButtonText}>Filter</Text>
+        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -148,6 +166,13 @@ const ReportScreen: React.FC = () => {
           <View style={styles.bottomPadding} />
         </View>
       </ScrollView>
+
+      <FilterModal
+        visible={filterModalVisible}
+        onClose={() => setFilterModalVisible(false)}
+        onApply={handleFilterApply}
+        currentRange={currentRange}
+      />
     </SafeAreaView>
   );
 };
@@ -183,6 +208,19 @@ const styles = StyleSheet.create({
     fontSize: FONTS.sizes.small,
     color: COLORS.text.secondary,
     marginTop: 2,
+  },
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    backgroundColor: COLORS.lightGray,
+    borderRadius: 8,
+  },
+  filterButtonText: {
+    fontFamily: FONTS.medium,
+    fontSize: FONTS.sizes.small,
+    color: COLORS.primary,
+    marginLeft: 4,
   },
   content: {
     paddingTop: 8,
