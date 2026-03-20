@@ -6,6 +6,7 @@ export interface User {
   email: string;
   farmName?: string;
   location?: string;
+  profilePhotoUrl?: string;
   preferredLanguage: 'en' | 'si';
   createdAt: Date;
   updatedAt: Date;

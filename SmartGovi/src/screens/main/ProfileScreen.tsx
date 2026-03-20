@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Image,
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { COLORS, FONTS } from '../../utils/constants';
@@ -92,8 +93,20 @@ const ProfileScreen: React.FC = () => {
       >
         {/* User Profile Header Card */}
         <View style={styles.profileCard}>
-          <View style={styles.avatarContainer}>
-            <Text style={styles.avatarText}>{getInitials(user.fullName)}</Text>
+          <View style={styles.avatarWrapper}>
+            <View style={styles.avatarContainer}>
+              {user.profilePhotoUrl ? (
+                <Image 
+                  source={{ uri: user.profilePhotoUrl }} 
+                  style={styles.avatarImage} 
+                />
+              ) : (
+                <Text style={styles.avatarText}>{getInitials(user.fullName)}</Text>
+              )}
+            </View>
+            <TouchableOpacity style={styles.editPhotoBadge} activeOpacity={0.8}>
+              <MaterialIcons name="camera-alt" size={16} color={COLORS.white} />
+            </TouchableOpacity>
           </View>
           <Text style={styles.userFullName}>{user.fullName}</Text>
           <Text style={styles.userEmail}>{user.email}</Text>
@@ -183,19 +196,46 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
   },
+  avatarWrapper: {
+    position: 'relative',
+    marginBottom: 16,
+  },
   avatarContainer: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     backgroundColor: COLORS.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
     elevation: 4,
     shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  editPhotoBadge: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    backgroundColor: COLORS.primary,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: COLORS.white,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   avatarText: {
     fontFamily: FONTS.bold,
