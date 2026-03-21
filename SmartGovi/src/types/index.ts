@@ -302,6 +302,11 @@ export type DashboardStackParamList = {
   Settings: undefined;
 };
 
+export type ProfileStackParamList = {
+  ProfileMain: undefined;
+  EditProfile: undefined;
+};
+
 // Constants
 export const QUICK_ACTIONS: QuickAction[] = [
   {

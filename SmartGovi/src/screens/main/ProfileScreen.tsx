@@ -12,6 +12,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { COLORS, FONTS } from '../../utils/constants';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { storageService } from '../../services/storageService';
 import { authService } from '../../services/authService';
@@ -56,6 +57,7 @@ const InfoItem: React.FC<{
 
 const ProfileScreen: React.FC = () => {
   const { user, logout, updateUser } = useAuth();
+  const navigation = useNavigation<any>();
   const [isUploading, setIsUploading] = useState(false);
 
   const handleEditPhoto = () => {
@@ -200,6 +202,9 @@ const ProfileScreen: React.FC = () => {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Profile</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('EditProfile')}>
+          <MaterialIcons name="edit" size={24} color={COLORS.primary} />
+        </TouchableOpacity>
       </View>
 
       <ScrollView 
@@ -298,6 +303,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   headerTitle: {
     fontFamily: FONTS.bold,
