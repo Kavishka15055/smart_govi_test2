@@ -27,8 +27,8 @@ const EditProfileScreen: React.FC = () => {
     if (!fullName.trim()) newErrors.fullName = 'Full Name is required';
     if (!phoneNumber.trim()) {
       newErrors.phoneNumber = 'Phone Number is required';
-    } else if (!/^\d{9,10}$/.test(phoneNumber.replace(/\D/g, ''))) {
-      newErrors.phoneNumber = 'Enter a valid phone number';
+    } else if (!/^(?:0|94|\+94)?(?:7[01245678]|11|2[134567]|3[12345678]|4[157]|5[12457]|6[3567]|8[12])[0-9]{7}$/.test(phoneNumber.replace(/\s/g, ''))) {
+      newErrors.phoneNumber = 'Enter a valid Sri Lankan phone number';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -74,6 +74,14 @@ const EditProfileScreen: React.FC = () => {
       >
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           <Input
+            label="Email"
+            value={user?.email || ''}
+            onChangeText={() => {}}
+            icon="email"
+            editable={false}
+          />
+          
+          <Input
             label="Full Name"
             value={fullName}
             onChangeText={setFullName}
@@ -108,12 +116,21 @@ const EditProfileScreen: React.FC = () => {
             icon="location-on"
           />
 
-          <Button
-            title="Save Changes"
-            onPress={handleSave}
-            loading={isSaving}
-            style={styles.saveButton}
-          />
+          <View style={styles.buttonContainer}>
+            <Button
+              title="Cancel"
+              onPress={() => navigation.goBack()}
+              variant="outline"
+              disabled={isSaving}
+              style={styles.actionButton}
+            />
+            <Button
+              title="Save Changes"
+              onPress={handleSave}
+              loading={isSaving}
+              style={styles.actionButton}
+            />
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -131,8 +148,14 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 24,
   },
-  saveButton: {
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 24,
+    gap: 16,
+  },
+  actionButton: {
+    flex: 1,
   },
 });
 
