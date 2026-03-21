@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,10 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { COLORS, FONTS } from '../../utils/constants';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import { storageService } from '../../services/storageService';
+import { authService } from '../../services/authService';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const formatPhoneNumber = (phoneNumber: string) => {
   if (!phoneNumber) return '';
@@ -51,7 +55,72 @@ const InfoItem: React.FC<{
 );
 
 const ProfileScreen: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleEditPhoto = () => {
+    Alert.alert(
+      'Profile Photo',
+      'Choose an option',
+      [
+        { text: 'Take Photo', onPress: () => handleImagePick('camera') },
+        { text: 'Choose from Gallery', onPress: () => handleImagePick('gallery') },
+        { text: 'Cancel', style: 'cancel' }
+      ]
+    );
+  };
+
+  const handleImagePick = async (mode: 'camera' | 'gallery') => {
+    try {
+      let result;
+      
+      if (mode === 'camera') {
+        const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+        if (permissionResult.granted === false) {
+          Alert.alert('Permission Denied', 'Camera permission is required to take a photo.');
+          return;
+        }
+        result = await ImagePicker.launchCameraAsync({
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 0.5,
+        });
+      } else {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissionResult.granted === false) {
+          Alert.alert('Permission Denied', 'Gallery permission is required to pick a photo.');
+          return;
+        }
+        result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 0.5,
+        });
+      }
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        uploadPhoto(result.assets[0].uri);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to select image');
+    }
+  };
+
+  const uploadPhoto = async (uri: string) => {
+    if (!user) return;
+    setIsUploading(true);
+    try {
+      const downloadURL = await storageService.uploadProfilePhoto(uri, user.id);
+      await authService.updateUserProfile(user.id, { profilePhotoUrl: downloadURL });
+      await updateUser({ profilePhotoUrl: downloadURL });
+      Alert.alert('Success', 'Profile photo updated successfully!');
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to upload profile photo. Please try again.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleLogout = () => {
     Alert.alert(
@@ -80,6 +149,10 @@ const ProfileScreen: React.FC = () => {
 
   if (!user) return null;
 
+  if (isUploading) {
+    return <LoadingSpinner fullScreen message="Uploading Profile Photo..." />;
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -104,7 +177,11 @@ const ProfileScreen: React.FC = () => {
                 <Text style={styles.avatarText}>{getInitials(user.fullName)}</Text>
               )}
             </View>
-            <TouchableOpacity style={styles.editPhotoBadge} activeOpacity={0.8}>
+            <TouchableOpacity 
+              style={styles.editPhotoBadge} 
+              activeOpacity={0.8}
+              onPress={handleEditPhoto}
+            >
               <MaterialIcons name="camera-alt" size={16} color={COLORS.white} />
             </TouchableOpacity>
           </View>

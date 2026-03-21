@@ -9,6 +9,7 @@ interface AuthContextType extends AuthState {
   signUp: (userData: any) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
+  updateUser: (data: Partial<User>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -128,6 +129,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setState(prev => ({ ...prev, error: null }));
   };
 
+  const updateUser = async (data: Partial<User>) => {
+    if (!state.user) return;
+    
+    try {
+      const updatedUser = { ...state.user, ...data };
+      await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+      setState(prev => ({
+        ...prev,
+        user: updatedUser
+      }));
+    } catch (error) {
+      console.error('Failed to update user context:', error);
+      throw error;
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -136,6 +153,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         signUp,
         logout,
         clearError,
+        updateUser,
       }}
     >
       {children}

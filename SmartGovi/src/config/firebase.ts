@@ -7,12 +7,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // Your Firebase configuration
 // Replace with your own config from Firebase Console
 const firebaseConfig = {
-  apiKey: "AIzaSyActAqg4N9h6mUO8x53JSFG9TgahGe0tnI",
-  authDomain: "smartgovi-9378a.firebaseapp.com",
-  projectId: "smartgovi-9378a",
-  storageBucket: "smartgovi-9378a.firebasestorage.app",
-  messagingSenderId: "789055550094",
-  appId: "1:789055550094:android:fb4b45482494546acb4fdf"
+  apiKey: "AIzaSyBmkVnBcx14TXeGKBnzC3jFDI-VIcmhMTc",
+  authDomain: "loginapp-d967c.firebaseapp.com",
+  projectId: "loginapp-d967c",
+  storageBucket: "loginapp-d967c.firebasestorage.app",
+  messagingSenderId: "444363109815",
+  appId: "1:444363109815:android:44b06047c5b4e48389a432"
 };
 
 // Initialize Firebase

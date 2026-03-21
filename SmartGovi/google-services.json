@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "789055550094",
-    "project_id": "smartgovi-9378a",
-    "storage_bucket": "smartgovi-9378a.firebasestorage.app"
+    "project_number": "444363109815",
+    "project_id": "loginapp-d967c",
+    "storage_bucket": "loginapp-d967c.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:789055550094:android:fb4b45482494546acb4fdf",
+        "mobilesdk_app_id": "1:444363109815:android:44b06047c5b4e48389a432",
         "android_client_info": {
           "package_name": "com.kavishka.smartgovi"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyActAqg4N9h6mUO8x53JSFG9TgahGe0tnI"
+          "current_key": "AIzaSyBmkVnBcx14TXeGKBnzC3jFDI-VIcmhMTc"
         }
       ],
       "services": {
