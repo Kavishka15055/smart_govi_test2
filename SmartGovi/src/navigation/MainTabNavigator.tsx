@@ -14,6 +14,7 @@ import AddIncomeScreen from '../screens/main/AddIncomeScreen';
 import AddExpenseScreen from '../screens/main/AddExpenseScreen';
 import SettingsScreen from '../screens/main/SettingsScreen';
 import EditProfileScreen from '../screens/main/EditProfileScreen';
+import EditFarmDetailsScreen from '../screens/main/EditFarmDetailsScreen';
 
 // Create stack for dashboard-related screens
 const DashboardStack = createStackNavigator<DashboardStackParamList>();
@@ -37,6 +38,7 @@ const ProfileStackNavigator = () => {
     <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
       <ProfileStack.Screen name="ProfileMain" component={ProfileScreen} />
       <ProfileStack.Screen name="EditProfile" component={EditProfileScreen} />
+      <ProfileStack.Screen name="EditFarmDetails" component={EditFarmDetailsScreen} />
     </ProfileStack.Navigator>
   );
 };

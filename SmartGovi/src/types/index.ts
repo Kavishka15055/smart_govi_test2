@@ -305,6 +305,7 @@ export type DashboardStackParamList = {
 export type ProfileStackParamList = {
   ProfileMain: undefined;
   EditProfile: undefined;
+  EditFarmDetails: undefined;
 };
 
 // Constants

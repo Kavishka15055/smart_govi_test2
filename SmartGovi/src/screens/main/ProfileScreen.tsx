@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -12,11 +12,14 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { COLORS, FONTS } from '../../utils/constants';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { storageService } from '../../services/storageService';
 import { authService } from '../../services/authService';
+import { farmService } from '../../services/farmService';
+import { Farm, FARM_TYPE_OPTIONS } from '../../types';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { ActivityIndicator } from 'react-native';
 
 const formatPhoneNumber = (phoneNumber: string) => {
   if (!phoneNumber) return '';
@@ -59,6 +62,29 @@ const ProfileScreen: React.FC = () => {
   const { user, logout, updateUser } = useAuth();
   const navigation = useNavigation<any>();
   const [isUploading, setIsUploading] = useState(false);
+  
+  const [farmData, setFarmData] = useState<Farm | null>(null);
+  const [isLoadingFarm, setIsLoadingFarm] = useState(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (user) {
+        loadFarmData();
+      }
+    }, [user])
+  );
+
+  const loadFarmData = async () => {
+    try {
+      setIsLoadingFarm(true);
+      const data = await farmService.getFarmProfile(user!.id);
+      setFarmData(data);
+    } catch (error) {
+      console.error('Failed to load farm details:', error);
+    } finally {
+      setIsLoadingFarm(false);
+    }
+  };
 
   const handleEditPhoto = () => {
     const options: any[] = [
@@ -272,6 +298,69 @@ const ProfileScreen: React.FC = () => {
           </View>
         </View>
 
+        {/* Farm Setup Details */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>FARM SETTINGS / DETAILS</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('EditFarmDetails')} style={styles.sectionEditIcon}>
+              <MaterialIcons name="edit" size={18} color={COLORS.primary} />
+            </TouchableOpacity>
+          </View>
+          
+          <View style={styles.sectionCard}>
+            {isLoadingFarm ? (
+              <View style={{ padding: 24, alignItems: 'center' }}>
+                <ActivityIndicator color={COLORS.primary} />
+              </View>
+            ) : !farmData ? (
+              <View style={{ padding: 20 }}>
+                <Text style={styles.emptyText}>
+                  No farm setup found.
+                </Text>
+              </View>
+            ) : (
+              <View style={{ padding: 16 }}>
+                <Text style={[styles.subHeading, { marginTop: 0 }]}>Farm Types</Text>
+                <View style={styles.chipContainer}>
+                  {farmData.types && farmData.types.length > 0 ? farmData.types.map(type => {
+                    const opt = FARM_TYPE_OPTIONS.find(o => o.id === type);
+                    return (
+                      <View key={type} style={styles.chip}>
+                        <Text style={styles.chipEmoji}>{opt?.emoji || '🌱'}</Text>
+                        <Text style={styles.chipText}>{opt?.label || type}</Text>
+                      </View>
+                    );
+                  }) : <Text style={styles.emptyText}>No farm types selected</Text>}
+                </View>
+
+                <View style={styles.dividerContainer} />
+
+                <Text style={styles.subHeading}>Income Sources</Text>
+                <View style={styles.chipContainer}>
+                  {farmData.incomeCategories && farmData.incomeCategories.length > 0 ? farmData.incomeCategories.map(cat => (
+                    <View key={cat.id} style={[styles.chip, styles.incomeChip]}>
+                      <MaterialIcons name="check-circle" size={14} color="#2E7D32" style={{ marginRight: 4 }} />
+                      <Text style={[styles.chipText, { color: '#1B5E20' }]}>{cat.name}</Text>
+                    </View>
+                  )) : <Text style={styles.emptyText}>No income sources configured</Text>}
+                </View>
+
+                <View style={styles.dividerContainer} />
+
+                <Text style={styles.subHeading}>Expense Categories</Text>
+                <View style={styles.chipContainer}>
+                  {farmData.expenseCategories && farmData.expenseCategories.length > 0 ? farmData.expenseCategories.map(cat => (
+                    <View key={cat.id} style={[styles.chip, styles.expenseChip]}>
+                      <MaterialIcons name="check-circle" size={14} color="#C62828" style={{ marginRight: 4 }} />
+                      <Text style={[styles.chipText, { color: '#B71C1C' }]}>{cat.name}</Text>
+                    </View>
+                  )) : <Text style={styles.emptyText}>No expense categories configured</Text>}
+                </View>
+              </View>
+            )}
+          </View>
+        </View>
+
         {/* Actions */}
         <View style={styles.section}>
           <TouchableOpacity 
@@ -463,6 +552,68 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: COLORS.text.disabled,
     marginTop: 4,
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+    paddingRight: 4,
+  },
+  sectionEditIcon: {
+    padding: 4,
+  },
+  subHeading: {
+    fontFamily: FONTS.medium,
+    fontSize: 14,
+    color: COLORS.text.primary,
+    marginBottom: 8,
+    marginTop: 8,
+  },
+  chipContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 8,
+  },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.lightGray,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  chipEmoji: {
+    fontSize: 14,
+    marginRight: 4,
+  },
+  chipText: {
+    fontFamily: FONTS.medium,
+    fontSize: 12,
+    color: COLORS.text.primary,
+  },
+  incomeChip: {
+    backgroundColor: '#E8F5E9',
+    borderColor: '#A5D6A7',
+  },
+  expenseChip: {
+    backgroundColor: '#FFEBEE',
+    borderColor: '#FFCDD2',
+  },
+  emptyText: {
+    fontFamily: FONTS.regular,
+    fontSize: 13,
+    color: COLORS.text.secondary,
+    fontStyle: 'italic',
+    paddingVertical: 4,
+  },
+  dividerContainer: {
+    height: 1,
+    backgroundColor: COLORS.border,
+    marginVertical: 8,
   },
 });
 

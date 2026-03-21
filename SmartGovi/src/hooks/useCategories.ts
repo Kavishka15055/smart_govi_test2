@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { db } from '../config/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
@@ -10,8 +11,9 @@ export const useCategories = (type: 'income' | 'expense') => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
+  useFocusEffect(
+    useCallback(() => {
+      const fetchCategories = async () => {
       if (!user) return;
 
       try {
@@ -49,7 +51,8 @@ export const useCategories = (type: 'income' | 'expense') => {
     };
 
     fetchCategories();
-  }, [user, type]);
+    }, [user, type])
+  );
 
   return { categories, loading, error };
 };
