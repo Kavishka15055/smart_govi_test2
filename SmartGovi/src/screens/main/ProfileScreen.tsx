@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   Image,
+  Modal,
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { COLORS, FONTS } from '../../utils/constants';
@@ -65,6 +66,7 @@ const ProfileScreen: React.FC = () => {
   
   const [farmData, setFarmData] = useState<Farm | null>(null);
   const [isLoadingFarm, setIsLoadingFarm] = useState(true);
+  const [showAboutModal, setShowAboutModal] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -363,6 +365,22 @@ const ProfileScreen: React.FC = () => {
 
         {/* Actions */}
         <View style={styles.section}>
+          <Text style={styles.sectionTitle}>APP</Text>
+          <View style={styles.sectionCard}>
+            <TouchableOpacity 
+              style={styles.actionItem} 
+              onPress={() => setShowAboutModal(true)}
+            >
+              <View style={styles.actionIconContainer}>
+                <MaterialIcons name="info-outline" size={22} color={COLORS.primary} />
+              </View>
+              <Text style={styles.actionItemText}>About GoviGanana</Text>
+              <MaterialIcons name="chevron-right" size={24} color={COLORS.border} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={[styles.section, { marginTop: 32 }]}>
           <TouchableOpacity 
             style={styles.logoutButton} 
             onPress={handleLogout}
@@ -373,10 +391,49 @@ const ProfileScreen: React.FC = () => {
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.versionText}>SmartGovi v1.0.0</Text>
-          <Text style={styles.tagline}>Empowering Sri Lankan Farmers</Text>
+          <Text style={styles.versionText}>GoviGanana v1.0.0</Text>
+          <Text style={styles.tagline}>Your Farm Financial Companion</Text>
         </View>
       </ScrollView>
+
+      {/* About Modal */}
+      <Modal
+        visible={showAboutModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowAboutModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalLogoContainer}>
+              <MaterialIcons name="agriculture" size={48} color={COLORS.primary} />
+            </View>
+            <Text style={styles.modalTitle}>GoviGanana</Text>
+            <Text style={styles.modalVersion}>Version 1.0.0</Text>
+            
+            <View style={styles.modalDivider} />
+            
+            <Text style={styles.modalDescription}>
+              Your Farm Financial Companion
+            </Text>
+            <Text style={styles.modalDetailText}>
+              Empowering Sri Lankan farmers with smart financial tracking and agricultural management tools.
+            </Text>
+            
+            <Text style={styles.modalCopyright}>
+              © {new Date().getFullYear()} GoviGanana. All rights reserved.
+            </Text>
+
+            <TouchableOpacity 
+              style={styles.modalButton}
+              onPress={() => setShowAboutModal(false)}
+            >
+              <Text style={styles.modalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
     </SafeAreaView>
   );
 };
@@ -614,6 +671,105 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: COLORS.border,
     marginVertical: 8,
+  },
+  actionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+  },
+  actionIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F0F7F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  actionItemText: {
+    flex: 1,
+    fontFamily: FONTS.medium,
+    fontSize: 16,
+    color: COLORS.text.primary,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    width: '100%',
+    backgroundColor: COLORS.white,
+    borderRadius: 24,
+    padding: 32,
+    alignItems: 'center',
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+  },
+  modalLogoContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#F0F7F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontFamily: FONTS.bold,
+    fontSize: 24,
+    color: COLORS.text.primary,
+    marginBottom: 4,
+  },
+  modalVersion: {
+    fontFamily: FONTS.medium,
+    fontSize: 14,
+    color: COLORS.primary,
+    marginBottom: 24,
+  },
+  modalDivider: {
+    width: '100%',
+    height: 1,
+    backgroundColor: COLORS.border,
+    marginBottom: 24,
+  },
+  modalDescription: {
+    fontFamily: FONTS.bold,
+    fontSize: 16,
+    color: COLORS.text.primary,
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  modalDetailText: {
+    fontFamily: FONTS.regular,
+    fontSize: 14,
+    color: COLORS.text.secondary,
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 32,
+  },
+  modalCopyright: {
+    fontFamily: FONTS.medium,
+    fontSize: 12,
+    color: COLORS.text.disabled,
+    marginBottom: 24,
+  },
+  modalButton: {
+    width: '100%',
+    backgroundColor: COLORS.primary,
+    paddingVertical: 16,
+    borderRadius: 16,
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    fontFamily: FONTS.bold,
+    fontSize: 16,
+    color: COLORS.white,
   },
 });
 
