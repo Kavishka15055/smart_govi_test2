@@ -21,22 +21,32 @@ const EditProfileScreen: React.FC = () => {
   
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isValid, setIsValid] = useState(true);
 
-  const validate = () => {
+  React.useEffect(() => {
     let newErrors: { [key: string]: string } = {};
-    if (!fullName.trim()) newErrors.fullName = 'Full Name is required';
-    if (!phoneNumber.trim()) {
-      newErrors.phoneNumber = 'Phone Number is required';
-    } else if (!/^(?:0|94|\+94)?(?:7[01245678]|11|2[134567]|3[12345678]|4[157]|5[12457]|6[3567]|8[12])[0-9]{7}$/.test(phoneNumber.replace(/\s/g, ''))) {
-      newErrors.phoneNumber = 'Enter a valid Sri Lankan phone number';
+    let valid = true;
+
+    if (!fullName.trim()) {
+      newErrors.fullName = 'Full name is required';
+      valid = false;
     }
+
+    if (!phoneNumber.trim()) {
+      newErrors.phoneNumber = 'Invalid Sri Lankan phone number';
+      valid = false;
+    } else if (!/^(07\d{8}|\+94\d{9})$/.test(phoneNumber.replace(/\s/g, ''))) {
+      newErrors.phoneNumber = 'Invalid Sri Lankan phone number';
+      valid = false;
+    }
+
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    setIsValid(valid);
+  }, [fullName, phoneNumber]);
 
   const handleSave = async () => {
     if (!user) return;
-    if (!validate()) return;
+    if (!isValid) return;
 
     setIsSaving(true);
     try {
@@ -128,6 +138,7 @@ const EditProfileScreen: React.FC = () => {
               title="Save Changes"
               onPress={handleSave}
               loading={isSaving}
+              disabled={!isValid || isSaving}
               style={styles.actionButton}
             />
           </View>
