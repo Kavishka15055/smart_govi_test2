@@ -1,5 +1,5 @@
 import { storage } from '../config/firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 
 class StorageService {
   async uploadProfilePhoto(uri: string, userId: string): Promise<string> {
@@ -31,6 +31,16 @@ class StorageService {
     } catch (error: any) {
       console.error('Error uploading profile photo:', error);
       throw new Error(error.message || 'Failed to upload photo');
+    }
+  }
+
+  async deleteProfilePhoto(url: string): Promise<void> {
+    try {
+      const fileRef = ref(storage, url);
+      await deleteObject(fileRef);
+    } catch (error: any) {
+      console.error('Error deleting profile photo:', error);
+      throw new Error(error.message || 'Failed to delete photo');
     }
   }
 }

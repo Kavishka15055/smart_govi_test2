@@ -59,15 +59,57 @@ const ProfileScreen: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
 
   const handleEditPhoto = () => {
+    const options: any[] = [
+      { text: 'Take Photo', onPress: () => handleImagePick('camera') },
+      { text: 'Choose from Gallery', onPress: () => handleImagePick('gallery') },
+    ];
+
+    if (user?.profilePhotoUrl) {
+      options.push({ 
+        text: 'Remove Photo', 
+        onPress: confirmRemovePhoto,
+        style: 'destructive' 
+      });
+    }
+
+    options.push({ text: 'Cancel', style: 'cancel' });
+
     Alert.alert(
       'Profile Photo',
       'Choose an option',
+      options
+    );
+  };
+
+  const confirmRemovePhoto = () => {
+    Alert.alert(
+      'Remove profile photo?',
+      'Are you sure you want to remove your profile photo?',
       [
-        { text: 'Take Photo', onPress: () => handleImagePick('camera') },
-        { text: 'Choose from Gallery', onPress: () => handleImagePick('gallery') },
-        { text: 'Cancel', style: 'cancel' }
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Remove', 
+          style: 'destructive',
+          onPress: removePhoto
+        }
       ]
     );
+  };
+
+  const removePhoto = async () => {
+    if (!user || !user.profilePhotoUrl) return;
+    
+    setIsUploading(true);
+    try {
+      await storageService.deleteProfilePhoto(user.profilePhotoUrl);
+      await authService.updateUserProfile(user.id, { profilePhotoUrl: "" });
+      await updateUser({ profilePhotoUrl: "" });
+      Alert.alert('Success', 'Profile photo removed successfully!');
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to remove profile photo.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleImagePick = async (mode: 'camera' | 'gallery') => {
