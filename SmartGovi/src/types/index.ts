@@ -6,6 +6,7 @@ export interface User {
   email: string;
   farmName?: string;
   location?: string;
+  profilePhotoUrl?: string;
   preferredLanguage: 'en' | 'si';
   createdAt: Date;
   updatedAt: Date;
@@ -299,6 +300,12 @@ export type DashboardStackParamList = {
   History: undefined;
   TransactionDetail: { transactionId: string; type: 'income' | 'expense' };
   Settings: undefined;
+};
+
+export type ProfileStackParamList = {
+  ProfileMain: undefined;
+  EditProfile: undefined;
+  EditFarmDetails: undefined;
 };
 
 // Constants

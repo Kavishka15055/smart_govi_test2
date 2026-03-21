@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { MainTabParamList, DashboardStackParamList } from '../types';
+import { MainTabParamList, DashboardStackParamList, ProfileStackParamList } from '../types';
 import { COLORS, FONTS } from '../utils/constants';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -13,6 +13,8 @@ import ProfileScreen from '../screens/main/ProfileScreen';
 import AddIncomeScreen from '../screens/main/AddIncomeScreen';
 import AddExpenseScreen from '../screens/main/AddExpenseScreen';
 import SettingsScreen from '../screens/main/SettingsScreen';
+import EditProfileScreen from '../screens/main/EditProfileScreen';
+import EditFarmDetailsScreen from '../screens/main/EditFarmDetailsScreen';
 
 // Create stack for dashboard-related screens
 const DashboardStack = createStackNavigator<DashboardStackParamList>();
@@ -26,6 +28,18 @@ const DashboardStackNavigator = () => {
       <DashboardStack.Screen name="Report" component={ReportScreen} />
       <DashboardStack.Screen name="Settings" component={SettingsScreen} />
     </DashboardStack.Navigator>
+  );
+};
+
+const ProfileStack = createStackNavigator<ProfileStackParamList>();
+
+const ProfileStackNavigator = () => {
+  return (
+    <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
+      <ProfileStack.Screen name="ProfileMain" component={ProfileScreen} />
+      <ProfileStack.Screen name="EditProfile" component={EditProfileScreen} />
+      <ProfileStack.Screen name="EditFarmDetails" component={EditFarmDetailsScreen} />
+    </ProfileStack.Navigator>
   );
 };
 
@@ -87,7 +101,7 @@ const MainTabNavigator: React.FC = () => {
       
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
+        component={ProfileStackNavigator}
         options={{
           tabBarLabel: 'Profile',
           tabBarIcon: ({ color, size }) => (

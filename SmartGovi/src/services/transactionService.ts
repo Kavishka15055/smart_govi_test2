@@ -13,6 +13,7 @@ import {
   Timestamp,
   startAt,
   endAt,
+  getCountFromServer,
 } from 'firebase/firestore';
 import { 
   format, 
@@ -32,6 +33,7 @@ import {
   DashboardSummary,
   RecentTransactionDisplay,
   CategoryBreakdown,
+  MonthlyData,
 } from '../types';
 
 class TransactionService {
@@ -306,6 +308,50 @@ class TransactionService {
     } catch (error) {
       console.error('Error getting dashboard summary:', error);
       throw error;
+    }
+  }
+
+  // Check if category is used
+  async isCategoryInUse(categoryId: string): Promise<boolean> {
+    try {
+      const incomeQuery = query(
+        collection(db, 'income'),
+        where('categoryId', '==', categoryId),
+        limit(1)
+      );
+      const expenseQuery = query(
+        collection(db, 'expenses'),
+        where('categoryId', '==', categoryId),
+        limit(1)
+      );
+      
+      const [incSnap, expSnap] = await Promise.all([
+        getDocs(incomeQuery),
+        getDocs(expenseQuery)
+      ]);
+      
+      return !incSnap.empty || !expSnap.empty;
+    } catch (error) {
+      console.error('Error checking category usage:', error);
+      return true; // Fail safe
+    }
+  }
+
+  // Get Category Transaction Count
+  async getCategoryTransactionCount(categoryId: string): Promise<number> {
+    try {
+      const incomeQuery = query(collection(db, 'income'), where('categoryId', '==', categoryId));
+      const expenseQuery = query(collection(db, 'expenses'), where('categoryId', '==', categoryId));
+      
+      const [incSnap, expSnap] = await Promise.all([
+        getCountFromServer(incomeQuery),
+        getCountFromServer(expenseQuery)
+      ]);
+      
+      return incSnap.data().count + expSnap.data().count;
+    } catch (error) {
+      console.error('Error counting category transactions:', error);
+      return 0;
     }
   }
 
