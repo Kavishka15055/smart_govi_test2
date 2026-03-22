@@ -12,7 +12,7 @@ import {
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { COLORS, FONTS } from '../../utils/constants';
-import { DashboardStackParamList, Transaction } from '../../types';
+import { RootStackParamList, Transaction } from '../../types';
 import { transactionService } from '../../services/transactionService';
 import {
   formatCurrency,
@@ -26,8 +26,8 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
-type TransactionDetailRouteProp = RouteProp<DashboardStackParamList, 'TransactionDetail'>;
-type TransactionDetailNavigationProp = StackNavigationProp<DashboardStackParamList, 'TransactionDetail'>;
+type TransactionDetailRouteProp = RouteProp<RootStackParamList, 'TransactionDetail'>;
+type TransactionDetailNavigationProp = StackNavigationProp<RootStackParamList, 'TransactionDetail'>;
 
 const TransactionDetailScreen: React.FC = () => {
   const route = useRoute<TransactionDetailRouteProp>();
@@ -72,7 +72,7 @@ const TransactionDetailScreen: React.FC = () => {
             try {
               await transactionService.deleteTransaction(type, transactionId);
               Alert.alert(t('common.success'), t('transactionDetail.deletedSuccess'));
-              navigation.navigate('DashboardMain');
+              navigation.goBack();
             } catch (error) {
               Alert.alert(t('common.error'), 'Failed to delete transaction');
             }

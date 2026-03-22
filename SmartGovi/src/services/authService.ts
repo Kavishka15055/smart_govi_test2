@@ -27,18 +27,7 @@ class AuthService {
         throw new Error('User data not found');
       }
     } catch (error: any) {
-      console.error('Login error:', error);
-      
-      // Handle specific Firebase errors
-      if (error.code === 'auth/user-not-found') {
-        throw new Error('No user found with this email');
-      } else if (error.code === 'auth/wrong-password') {
-        throw new Error('Incorrect password');
-      } else if (error.code === 'auth/invalid-email') {
-        throw new Error('Invalid email address');
-      } else {
-        throw new Error(error.message || 'Login failed');
-      }
+      throw error;
     }
   }
 
@@ -68,15 +57,7 @@ class AuthService {
       
       return newUser;
     } catch (error: any) {
-      console.error('Sign up error:', error);
-      
-      if (error.code === 'auth/email-already-in-use') {
-        throw new Error('Email already in use');
-      } else if (error.code === 'auth/weak-password') {
-        throw new Error('Password is too weak');
-      } else {
-        throw new Error(error.message || 'Sign up failed');
-      }
+      throw error;
     }
   }
 
@@ -84,8 +65,7 @@ class AuthService {
     try {
       await signOut(auth);
     } catch (error: any) {
-      console.error('Logout error:', error);
-      throw new Error(error.message || 'Logout failed');
+      throw new Error('Logout failed');
     }
   }
 
@@ -93,8 +73,7 @@ class AuthService {
     try {
       await sendPasswordResetEmail(auth, email);
     } catch (error: any) {
-      console.error('Reset password error:', error);
-      throw new Error(error.message || 'Password reset failed');
+      throw new Error('Password reset failed');
     }
   }
 
@@ -121,8 +100,7 @@ class AuthService {
         updatedAt: new Date()
       });
     } catch (error: any) {
-      console.error('Update profile error:', error);
-      throw new Error(error.message || 'Failed to update user profile');
+      throw new Error('Failed to update user profile');
     }
   }
 }
