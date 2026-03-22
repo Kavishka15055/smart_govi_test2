@@ -21,11 +21,13 @@ import TransactionGroup from '../../components/history/TransactionGroup';
 import TransactionDetailModal from '../../components/modals/TransactionDetailModal';
 import EmptyState from '../../components/common/EmptyState';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { useTranslation } from 'react-i18next';
 
 type HistoryScreenNavigationProp = StackNavigationProp<any, 'History'>;
 
 const HistoryScreen: React.FC = () => {
   const navigation = useNavigation<HistoryScreenNavigationProp>();
+  const { t } = useTranslation();
   const {
     transactions,
     loading,
@@ -73,16 +75,16 @@ const HistoryScreen: React.FC = () => {
   const handleDeleteTransaction = async (transactionId: string, type: 'income' | 'expense') => {
     try {
       await deleteTransaction(transactionId, type);
-      Alert.alert('Success', 'Transaction deleted successfully');
+      Alert.alert(t('common.success'), t('transactionDetail.deletedSuccess'));
     } catch (error) {
-      Alert.alert('Error', 'Failed to delete transaction');
+      Alert.alert(t('common.error'), 'Failed to delete transaction');
     }
   };
 
   const filterChips = [
-    { id: 'all', label: 'All', icon: 'list', selected: typeFilter === 'all' },
-    { id: 'income', label: 'Income', icon: 'trending-up', selected: typeFilter === 'income' },
-    { id: 'expense', label: 'Expense', icon: 'trending-down', selected: typeFilter === 'expense' },
+    { id: 'all', label: t('history.all'), icon: 'list', selected: typeFilter === 'all' },
+    { id: 'income', label: t('history.income'), icon: 'trending-up', selected: typeFilter === 'income' },
+    { id: 'expense', label: t('history.expense'), icon: 'trending-down', selected: typeFilter === 'expense' },
   ];
 
   const handleChipPress = (id: string) => {
@@ -106,12 +108,12 @@ const HistoryScreen: React.FC = () => {
   };
 
   if (loading && !refreshing) {
-    return <LoadingSpinner fullScreen message="Loading transactions..." />;
+    return <LoadingSpinner fullScreen message={t('common.loading')} />;
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Transaction History" />
+      <Header title={t('history.title')} />
 
       {/* Search Bar */}
       <SearchBar
@@ -157,11 +159,11 @@ const HistoryScreen: React.FC = () => {
         ListEmptyComponent={
           <EmptyState
             icon="📭"
-            title="No Transactions Found"
+            title={t('history.noTransactions')}
             message={
               searchQuery || typeFilter !== 'all'
-                ? "No transactions match your filters. Try adjusting your search."
-                : "You haven't added any transactions yet. Tap + to add your first income or expense."
+                ? t('history.noTransactionsDetail')
+                : "You haven't added any transactions yet."
             }
           />
         }

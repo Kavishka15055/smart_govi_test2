@@ -21,6 +21,9 @@ import { farmService } from '../../services/farmService';
 import { Farm, FARM_TYPE_OPTIONS } from '../../types';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { ActivityIndicator } from 'react-native';
+import { useSettings } from '../../context/SettingsContext';
+import { useTranslation } from 'react-i18next';
+import { SupportedLanguage } from '../../i18n';
 
 const formatPhoneNumber = (phoneNumber: string) => {
   if (!phoneNumber) return '';
@@ -62,6 +65,8 @@ const InfoItem: React.FC<{
 const ProfileScreen: React.FC = () => {
   const { user, logout, updateUser } = useAuth();
   const navigation = useNavigation<any>();
+  const { settings, changeLanguage } = useSettings();
+  const { t } = useTranslation();
   const [isUploading, setIsUploading] = useState(false);
   
   const [farmData, setFarmData] = useState<Farm | null>(null);
@@ -360,6 +365,34 @@ const ProfileScreen: React.FC = () => {
                 </View>
               </View>
             )}
+          </View>
+        </View>
+
+        {/* Language Settings */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>LANGUAGE / භාෂාව</Text>
+          <View style={styles.sectionCard}>
+            {([{ code: 'en', label: 'English', flag: '🇬🇧', sub: '' }, { code: 'si', label: 'සිංහල', flag: '🇱🇰', sub: 'Sinhala' }] as { code: SupportedLanguage; label: string; flag: string; sub: string }[]).map((lang) => {
+              const isSelected = settings.language === lang.code;
+              return (
+                <TouchableOpacity
+                  key={lang.code}
+                  style={[styles.languageItem, isSelected && styles.languageItemSelected]}
+                  onPress={() => changeLanguage(lang.code)}
+                >
+                  <Text style={styles.langFlag}>{lang.flag}</Text>
+                  <View style={styles.langInfo}>
+                    <Text style={[styles.langLabel, isSelected && styles.langLabelSelected]}>
+                      {lang.label}
+                    </Text>
+                    {lang.sub ? <Text style={styles.langSub}>{lang.sub}</Text> : null}
+                  </View>
+                  {isSelected && (
+                    <MaterialIcons name="check-circle" size={22} color={COLORS.primary} />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 
@@ -770,6 +803,38 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.bold,
     fontSize: 16,
     color: COLORS.white,
+  },
+  languageItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.lightGray,
+  },
+  languageItemSelected: {
+    backgroundColor: '#F0F7F0',
+  },
+  langFlag: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  langInfo: {
+    flex: 1,
+  },
+  langLabel: {
+    fontFamily: FONTS.medium,
+    fontSize: FONTS.sizes.medium,
+    color: COLORS.text.primary,
+  },
+  langLabelSelected: {
+    color: COLORS.primary,
+    fontFamily: FONTS.bold,
+  },
+  langSub: {
+    fontFamily: FONTS.regular,
+    fontSize: FONTS.sizes.small,
+    color: COLORS.text.secondary,
+    marginTop: 2,
   },
 });
 

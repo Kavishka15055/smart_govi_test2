@@ -1,18 +1,22 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import i18n, { LANGUAGE_KEY, SupportedLanguage } from '../i18n';
 
 interface Settings {
   showMonthlyComparison: boolean;
+  language: SupportedLanguage;
 }
 
 interface SettingsContextType {
   settings: Settings;
   toggleMonthlyComparison: () => void;
   updateSettings: (newSettings: Partial<Settings>) => void;
+  changeLanguage: (lang: SupportedLanguage) => Promise<void>;
 }
 
 const DEFAULT_SETTINGS: Settings = {
   showMonthlyComparison: true,
+  language: 'en',
 };
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -21,7 +25,6 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
 
   useEffect(() => {
-    // Load settings from storage
     const loadSettings = async () => {
       try {
         const savedSettings = await AsyncStorage.getItem('app_settings');
@@ -59,8 +62,16 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     saveSettings(updatedSettings);
   };
 
+  const changeLanguage = async (lang: SupportedLanguage) => {
+    await i18n.changeLanguage(lang);
+    await AsyncStorage.setItem(LANGUAGE_KEY, lang);
+    const newSettings = { ...settings, language: lang };
+    setSettings(newSettings);
+    saveSettings(newSettings);
+  };
+
   return (
-    <SettingsContext.Provider value={{ settings, toggleMonthlyComparison, updateSettings }}>
+    <SettingsContext.Provider value={{ settings, toggleMonthlyComparison, updateSettings, changeLanguage }}>
       {children}
     </SettingsContext.Provider>
   );

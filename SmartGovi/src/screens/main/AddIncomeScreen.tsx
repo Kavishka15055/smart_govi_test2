@@ -25,6 +25,7 @@ import CategoryPicker from '../../components/forms/CategoryPicker';
 import QuantityInput from '../../components/forms/QuantityInput';
 import SuccessModal from '../../components/common/SuccessModal';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { useTranslation } from 'react-i18next';
 
 type AddIncomeScreenNavigationProp = StackNavigationProp<any, 'AddIncome'>;
 
@@ -34,6 +35,7 @@ const AddIncomeScreen: React.FC = () => {
   const editTransaction = route.params?.transaction;
   const isEdit = !!editTransaction;
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { categories, loading: categoriesLoading } = useCategories('income');
 
   const [formData, setFormData] = useState<IncomeFormData>({

@@ -12,6 +12,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { COLORS, FONTS } from '../../utils/constants';
 import { AuthStackParamList } from '../../types';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 type SplashScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Splash'>;
 
@@ -20,6 +21,7 @@ const { width, height } = Dimensions.get('window');
 const SplashScreen: React.FC = () => {
   const navigation = useNavigation<SplashScreenNavigationProp>();
   const { user, isLoading } = useAuth();
+  const { t } = useTranslation();
   
   const fadeAnim = new Animated.Value(0);
   const scaleAnim = new Animated.Value(0.5);
@@ -90,7 +92,7 @@ const SplashScreen: React.FC = () => {
       </View>
 
       <Text style={styles.tagline}>
-        Your Farm Financial Companion
+        {t('splash.tagline')}
       </Text>
       <Text style={styles.taglineSinhala}>
         ඔබේ ගොවිපල මූල්ය සහායකයා

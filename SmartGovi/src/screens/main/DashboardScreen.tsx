@@ -23,12 +23,14 @@ import FilterModal from '../modals/FilterModal';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import EmptyState from '../../components/common/EmptyState';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 type DashboardScreenNavigationProp = StackNavigationProp<any, 'DashboardMain'>;
 
 const DashboardScreen: React.FC = () => {
   const navigation = useNavigation<DashboardScreenNavigationProp>();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -103,7 +105,7 @@ const DashboardScreen: React.FC = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner fullScreen message="Loading dashboard..." />;
+    return <LoadingSpinner fullScreen message={t('common.loading')} />;
   }
 
   return (
@@ -119,7 +121,7 @@ const DashboardScreen: React.FC = () => {
           onPress={() => setFilterModalVisible(true)}
         >
           <MaterialIcons name="filter-list" size={24} color={COLORS.primary} />
-          <Text style={styles.filterButtonText}>Filter</Text>
+          <Text style={styles.filterButtonText}>{t('dashboard.filter')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -160,10 +162,10 @@ const DashboardScreen: React.FC = () => {
         {/* Recent Transactions */}
         <View style={styles.recentSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>RECENT TRANSACTIONS</Text>
+            <Text style={styles.sectionTitle}>{t('dashboard.recentTransactions')}</Text>
             {recentTransactions.length > 0 && (
               <TouchableOpacity onPress={handleViewAllTransactions}>
-                <Text style={styles.viewAllLink}>View All</Text>
+                <Text style={styles.viewAllLink}>{t('common.viewAll')}</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -171,8 +173,8 @@ const DashboardScreen: React.FC = () => {
           {recentTransactions.length === 0 ? (
             <EmptyState
               icon="📭"
-              title="No Transactions Yet"
-              message="Add your first income or expense using the quick actions above"
+              title={t('dashboard.noRecent')}
+              message={t('dashboard.addFirst')}
             />
           ) : (
             recentTransactions.map((transaction) => (
@@ -194,12 +196,12 @@ const DashboardScreen: React.FC = () => {
         style={styles.fab}
         onPress={() => {
           Alert.alert(
-            'Add Transaction',
-            'Choose type',
+            t('dashboard.transactions'),
+            t('dashboard.filter'),
             [
-              { text: 'Income', onPress: () => navigation.navigate('AddIncome') },
-              { text: 'Expense', onPress: () => navigation.navigate('AddExpense') },
-              { text: 'Cancel', style: 'cancel' },
+              { text: t('dashboard.income'), onPress: () => navigation.navigate('AddIncome') },
+              { text: t('dashboard.expense'), onPress: () => navigation.navigate('AddExpense') },
+              { text: t('common.cancel'), style: 'cancel' },
             ]
           );
         }}

@@ -25,6 +25,7 @@ import CategoryPicker from '../../components/forms/CategoryPicker';
 import ImagePicker from '../../components/forms/ImagePicker';
 import SuccessModal from '../../components/common/SuccessModal';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { useTranslation } from 'react-i18next';
 
 type AddExpenseScreenNavigationProp = StackNavigationProp<any, 'AddExpense'>;
 
@@ -34,6 +35,7 @@ const AddExpenseScreen: React.FC = () => {
   const editTransaction = route.params?.transaction;
   const isEdit = !!editTransaction;
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { categories, loading: categoriesLoading } = useCategories('expense');
 
   const [formData, setFormData] = useState<ExpenseFormData>({
