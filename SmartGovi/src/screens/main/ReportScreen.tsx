@@ -124,12 +124,6 @@ const ReportScreen: React.FC = () => {
           <MaterialIcons name="filter-list" size={24} color={COLORS.primary} />
           <Text style={styles.filterButtonText}>Filter</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.settingsButton}
-          onPress={() => navigation.navigate('Settings')}
-        >
-          <MaterialIcons name="settings" size={24} color={COLORS.text.secondary} />
-        </TouchableOpacity>
       </View>
 
       <ScrollView
