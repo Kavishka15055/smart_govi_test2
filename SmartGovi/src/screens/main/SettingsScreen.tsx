@@ -12,10 +12,18 @@ import { COLORS, FONTS } from '../../utils/constants';
 import { useSettings } from '../../context/SettingsContext';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import { SupportedLanguage } from '../../i18n';
 
 const SettingsScreen: React.FC = () => {
-  const { settings, toggleMonthlyComparison } = useSettings();
+  const { settings, toggleMonthlyComparison, changeLanguage } = useSettings();
   const navigation = useNavigation();
+  const { t } = useTranslation();
+
+  const languages: { code: SupportedLanguage; label: string; nativeLabel: string }[] = [
+    { code: 'en', label: 'English', nativeLabel: 'English' },
+    { code: 'si', label: 'Sinhala', nativeLabel: 'සිංහල' },
+  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -26,18 +34,61 @@ const SettingsScreen: React.FC = () => {
         >
           <MaterialIcons name="arrow-back" size={24} color={COLORS.text.primary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Settings</Text>
+        <Text style={styles.headerTitle}>{t('settings.title')}</Text>
       </View>
 
       <ScrollView style={styles.content}>
+        {/* Language Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>REPORT SETTINGS</Text>
-          
+          <Text style={styles.sectionTitle}>{t('settings.language')}</Text>
+          <Text style={styles.sectionSubtitle}>{t('settings.selectLanguage')}</Text>
+
+          <View style={styles.languageContainer}>
+            {languages.map((lang) => {
+              const isSelected = settings.language === lang.code;
+              return (
+                <TouchableOpacity
+                  key={lang.code}
+                  style={[
+                    styles.languageButton,
+                    isSelected && styles.languageButtonSelected,
+                  ]}
+                  onPress={() => changeLanguage(lang.code)}
+                >
+                  <Text style={styles.languageFlagEmoji}>
+                    {lang.code === 'en' ? '🇬🇧' : '🇱🇰'}
+                  </Text>
+                  <View style={styles.languageLabelContainer}>
+                    <Text
+                      style={[
+                        styles.languageButtonText,
+                        isSelected && styles.languageButtonTextSelected,
+                      ]}
+                    >
+                      {lang.nativeLabel}
+                    </Text>
+                    {lang.code === 'si' && (
+                      <Text style={styles.languageButtonSubText}>Sinhala</Text>
+                    )}
+                  </View>
+                  {isSelected && (
+                    <MaterialIcons name="check-circle" size={22} color={COLORS.primary} />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* Report Settings */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t('settings.reportSettings')}</Text>
+
           <View style={styles.settingItem}>
             <View style={styles.settingInfo}>
-              <Text style={styles.settingLabel}>Show Monthly Comparison</Text>
+              <Text style={styles.settingLabel}>{t('settings.showMonthlyComparison')}</Text>
               <Text style={styles.settingDescription}>
-                Display month-by-month trends in report views
+                {t('settings.showMonthlyComparisonDesc')}
               </Text>
             </View>
             <Switch
@@ -49,10 +100,11 @@ const SettingsScreen: React.FC = () => {
           </View>
         </View>
 
+        {/* About */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>ABOUT</Text>
+          <Text style={styles.sectionTitle}>{t('settings.about')}</Text>
           <View style={styles.settingItem}>
-            <Text style={styles.settingLabel}>Version</Text>
+            <Text style={styles.settingLabel}>{t('settings.version')}</Text>
             <Text style={styles.versionText}>1.0.0</Text>
           </View>
         </View>
@@ -98,6 +150,54 @@ const styles = StyleSheet.create({
     color: COLORS.text.secondary,
     paddingHorizontal: 16,
     paddingVertical: 8,
+    letterSpacing: 0.8,
+  },
+  sectionSubtitle: {
+    fontFamily: FONTS.regular,
+    fontSize: FONTS.sizes.small,
+    color: COLORS.text.secondary,
+    paddingHorizontal: 16,
+    marginBottom: 8,
+  },
+  languageContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+    gap: 10,
+  },
+  languageButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.background,
+  },
+  languageButtonSelected: {
+    borderColor: COLORS.primary,
+    backgroundColor: '#F0F7F0',
+  },
+  languageFlagEmoji: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  languageLabelContainer: {
+    flex: 1,
+  },
+  languageButtonText: {
+    fontFamily: FONTS.medium,
+    fontSize: FONTS.sizes.medium,
+    color: COLORS.text.primary,
+  },
+  languageButtonTextSelected: {
+    color: COLORS.primary,
+    fontFamily: FONTS.bold,
+  },
+  languageButtonSubText: {
+    fontFamily: FONTS.regular,
+    fontSize: FONTS.sizes.small,
+    color: COLORS.text.secondary,
+    marginTop: 2,
   },
   settingItem: {
     flexDirection: 'row',

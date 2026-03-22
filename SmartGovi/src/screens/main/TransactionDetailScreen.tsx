@@ -24,6 +24,7 @@ import Header from '../../components/common/Header';
 import Button from '../../components/common/Button';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 type TransactionDetailRouteProp = RouteProp<DashboardStackParamList, 'TransactionDetail'>;
 type TransactionDetailNavigationProp = StackNavigationProp<DashboardStackParamList, 'TransactionDetail'>;
@@ -32,6 +33,7 @@ const TransactionDetailScreen: React.FC = () => {
   const route = useRoute<TransactionDetailRouteProp>();
   const navigation = useNavigation<TransactionDetailNavigationProp>();
   const { transactionId, type } = route.params;
+  const { t } = useTranslation();
 
   const [loading, setLoading] = useState(true);
   const [transaction, setTransaction] = useState<Transaction | null>(null);
@@ -43,11 +45,11 @@ const TransactionDetailScreen: React.FC = () => {
         if (data) {
           setTransaction(data);
         } else {
-          Alert.alert('Error', 'Transaction not found');
+          Alert.alert(t('common.error'), t('transactionDetail.notFound'));
           navigation.goBack();
         }
       } catch (error) {
-        Alert.alert('Error', 'Failed to fetch transaction details');
+        Alert.alert(t('common.error'), t('transactionDetail.fetchError'));
         navigation.goBack();
       } finally {
         setLoading(false);
@@ -59,20 +61,20 @@ const TransactionDetailScreen: React.FC = () => {
 
   const handleDelete = () => {
     Alert.alert(
-      'Delete Transaction',
-      'Are you sure you want to delete this transaction? This action cannot be undone.',
+      t('transactionDetail.deleteConfirmTitle'),
+      t('transactionDetail.deleteConfirmMsg'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await transactionService.deleteTransaction(type, transactionId);
-              Alert.alert('Success', 'Transaction deleted successfully');
+              Alert.alert(t('common.success'), t('transactionDetail.deletedSuccess'));
               navigation.navigate('DashboardMain');
             } catch (error) {
-              Alert.alert('Error', 'Failed to delete transaction');
+              Alert.alert(t('common.error'), 'Failed to delete transaction');
             }
           },
         },
@@ -97,7 +99,7 @@ const TransactionDetailScreen: React.FC = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner fullScreen message="Loading details..." />;
+    return <LoadingSpinner fullScreen message={t('common.loading')} />;
   }
 
   if (!transaction) return null;
@@ -109,7 +111,7 @@ const TransactionDetailScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Header 
-        title="Transaction Details" 
+        title={t('transactionDetail.title')} 
         showBack 
         onBackPress={() => navigation.goBack()} 
       />
@@ -121,7 +123,7 @@ const TransactionDetailScreen: React.FC = () => {
             <Text style={styles.iconEmoji}>{icon}</Text>
           </View>
           <Text style={[styles.typeText, { color }]}>
-            {isIncome ? 'INCOME' : 'EXPENSE'}
+            {isIncome ? t('transactionDetail.income') : t('transactionDetail.expense')}
           </Text>
           <Text style={[styles.amount, { color }]}>
             {isIncome ? '+' : '-'}{formatCurrency(transaction.amount)}
@@ -135,14 +137,14 @@ const TransactionDetailScreen: React.FC = () => {
         <View style={styles.detailsList}>
           <DetailItem
             icon="category"
-            label="Category"
+            label={t('transactionDetail.category')}
             value={transaction.categoryName}
           />
 
           {isIncome && 'quantity' in transaction && (
             <DetailItem
               icon="inventory"
-              label="Quantity"
+              label={t('transactionDetail.quantity')}
               value={`${transaction.quantity} ${transaction.unit}`}
             />
           )}
@@ -150,7 +152,7 @@ const TransactionDetailScreen: React.FC = () => {
           {!!transaction.notes && (
             <DetailItem
               icon="notes"
-              label="Notes"
+              label={t('transactionDetail.notes')}
               value={transaction.notes}
               isMultiline
             />
@@ -163,8 +165,8 @@ const TransactionDetailScreen: React.FC = () => {
             >
               <MaterialIcons name="receipt" size={24} color={COLORS.primary} />
               <View style={styles.receiptInfo}>
-                <Text style={styles.receiptLabel}>Receipt</Text>
-                <Text style={styles.viewReceiptText}>View Attachment</Text>
+                <Text style={styles.receiptLabel}>{t('transactionDetail.receipt')}</Text>
+                <Text style={styles.viewReceiptText}>{t('transactionDetail.viewAttachment')}</Text>
               </View>
               <MaterialIcons name="chevron-right" size={24} color={COLORS.text.secondary} />
             </TouchableOpacity>
@@ -174,14 +176,14 @@ const TransactionDetailScreen: React.FC = () => {
         {/* Action Buttons */}
         <View style={styles.actionContainer}>
           <Button
-            title="Edit Transaction"
+            title={t('transactionDetail.editTransaction')}
             onPress={handleEdit}
             variant="outline"
             style={styles.actionButton}
             icon={<MaterialIcons name="edit" size={20} color={COLORS.primary} />}
           />
           <Button
-            title="Delete Transaction"
+            title={t('transactionDetail.deleteTransaction')}
             onPress={handleDelete}
             variant="outline"
             style={[styles.actionButton, styles.deleteButton]}

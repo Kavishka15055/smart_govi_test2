@@ -25,6 +25,7 @@ import CategoryPicker from '../../components/forms/CategoryPicker';
 import QuantityInput from '../../components/forms/QuantityInput';
 import SuccessModal from '../../components/common/SuccessModal';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { useTranslation } from 'react-i18next';
 
 type AddIncomeScreenNavigationProp = StackNavigationProp<any, 'AddIncome'>;
 
@@ -34,6 +35,7 @@ const AddIncomeScreen: React.FC = () => {
   const editTransaction = route.params?.transaction;
   const isEdit = !!editTransaction;
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { categories, loading: categoriesLoading } = useCategories('income');
 
   const [formData, setFormData] = useState<IncomeFormData>({
@@ -112,7 +114,7 @@ const AddIncomeScreen: React.FC = () => {
     }
 
     if (!user) {
-      Alert.alert('Error', 'You must be logged in');
+      Alert.alert(t('common.error'), 'You must be logged in');
       return;
     }
 
@@ -153,7 +155,7 @@ const AddIncomeScreen: React.FC = () => {
       // Show success modal
       setShowSuccessModal(true);
     } catch (error) {
-      Alert.alert('Error', 'Failed to add income. Please try again.');
+      Alert.alert(t('common.error'), 'Failed to add income. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -195,13 +197,13 @@ const AddIncomeScreen: React.FC = () => {
   };
 
   if (categoriesLoading) {
-    return <LoadingSpinner fullScreen message="Loading categories..." />;
+    return <LoadingSpinner fullScreen message={t('common.loading')} />;
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <Header 
-        title={isEdit ? "Edit Income" : "Add Income"} 
+        title={isEdit ? t('income.editTitle') : t('income.addTitle')} 
         showBack 
         onBackPress={() => navigation.goBack()} 
       />
@@ -217,7 +219,7 @@ const AddIncomeScreen: React.FC = () => {
           <View style={styles.content}>
             {/* Date Picker */}
             <DatePicker
-              label="Date"
+              label={t('common.date')}
               value={formData.date}
               onChange={(date) => setFormData({ ...formData, date })}
               maximumDate={new Date()}
@@ -242,10 +244,10 @@ const AddIncomeScreen: React.FC = () => {
 
             {/* Amount Input */}
             <Input
-              label="Amount (LKR)"
+              label={t('income.amount')}
               value={formData.amount}
               onChangeText={handleAmountChange}
-              placeholder="2500"
+              placeholder={t('income.enterAmount')}
               keyboardType="numeric"
               icon="attach-money"
               error={errors.amount}
@@ -253,10 +255,10 @@ const AddIncomeScreen: React.FC = () => {
 
             {/* Notes Input */}
             <Input
-              label="Notes (Optional)"
+              label={t('income.notes')}
               value={formData.notes}
               onChangeText={(text) => setFormData({ ...formData, notes: text })}
-              placeholder="Sold at Colombo market..."
+              placeholder={t('income.enterNotes')}
               multiline
               numberOfLines={3}
               icon="notes"
@@ -264,7 +266,7 @@ const AddIncomeScreen: React.FC = () => {
 
             {/* Submit Button */}
             <Button
-              title={isEdit ? "Update Income" : "Save Income"}
+              title={isEdit ? t('income.updateIncome') : t('income.saveIncome')}
               onPress={handleSubmit}
               size="large"
               loading={isSubmitting}

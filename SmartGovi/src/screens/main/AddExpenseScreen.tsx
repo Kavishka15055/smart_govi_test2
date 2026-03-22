@@ -25,6 +25,7 @@ import CategoryPicker from '../../components/forms/CategoryPicker';
 import ImagePicker from '../../components/forms/ImagePicker';
 import SuccessModal from '../../components/common/SuccessModal';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { useTranslation } from 'react-i18next';
 
 type AddExpenseScreenNavigationProp = StackNavigationProp<any, 'AddExpense'>;
 
@@ -34,6 +35,7 @@ const AddExpenseScreen: React.FC = () => {
   const editTransaction = route.params?.transaction;
   const isEdit = !!editTransaction;
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { categories, loading: categoriesLoading } = useCategories('expense');
 
   const [formData, setFormData] = useState<ExpenseFormData>({
@@ -97,7 +99,7 @@ const AddExpenseScreen: React.FC = () => {
     }
 
     if (!user) {
-      Alert.alert('Error', 'You must be logged in');
+      Alert.alert(t('common.error'), 'You must be logged in');
       return;
     }
 
@@ -142,7 +144,7 @@ const AddExpenseScreen: React.FC = () => {
       // Show success modal
       setShowSuccessModal(true);
     } catch (error) {
-      Alert.alert('Error', 'Failed to add expense. Please try again.');
+      Alert.alert(t('common.error'), 'Failed to add expense. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -182,13 +184,13 @@ const AddExpenseScreen: React.FC = () => {
   };
 
   if (categoriesLoading) {
-    return <LoadingSpinner fullScreen message="Loading categories..." />;
+    return <LoadingSpinner fullScreen message={t('common.loading')} />;
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <Header 
-        title={isEdit ? "Edit Expense" : "Add Expense"} 
+        title={isEdit ? t('expense.editTitle') : t('expense.addTitle')} 
         showBack 
         onBackPress={() => navigation.goBack()} 
       />
@@ -204,7 +206,7 @@ const AddExpenseScreen: React.FC = () => {
           <View style={styles.content}>
             {/* Date Picker */}
             <DatePicker
-              label="Date"
+              label={t('common.date')}
               value={formData.date}
               onChange={(date) => setFormData({ ...formData, date })}
               maximumDate={new Date()}
@@ -220,10 +222,10 @@ const AddExpenseScreen: React.FC = () => {
 
             {/* Amount Input */}
             <Input
-              label="Amount (LKR)"
+              label={t('expense.amount')}
               value={formData.amount}
               onChangeText={handleAmountChange}
-              placeholder="1250"
+              placeholder={t('expense.enterAmount')}
               keyboardType="numeric"
               icon="attach-money"
               error={errors.amount}
@@ -231,10 +233,10 @@ const AddExpenseScreen: React.FC = () => {
 
             {/* Notes Input */}
             <Input
-              label="Notes (Optional)"
+              label={t('expense.notes')}
               value={formData.notes}
               onChangeText={(text) => setFormData({ ...formData, notes: text })}
-              placeholder="Bought from local supplier..."
+              placeholder={t('expense.enterNotes')}
               multiline
               numberOfLines={3}
               icon="notes"
@@ -249,7 +251,7 @@ const AddExpenseScreen: React.FC = () => {
 
             {/* Submit Button */}
             <Button
-              title={isEdit ? "Update Expense" : "Save Expense"}
+              title={isEdit ? t('expense.updateExpense') : t('expense.saveExpense')}
               onPress={handleSubmit}
               size="large"
               loading={isSubmitting}
