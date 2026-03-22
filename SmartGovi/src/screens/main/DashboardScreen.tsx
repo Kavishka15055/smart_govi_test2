@@ -53,7 +53,7 @@ const DashboardScreen: React.FC = () => {
       setRecentTransactions(data.recentTransactions);
       setDateRangeLabel(data.dateRange.label);
     } catch (error) {
-      Alert.alert('Error', 'Failed to load dashboard data');
+      Alert.alert(t('common.error'), t('dashboard.errorLoad'));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -113,7 +113,7 @@ const DashboardScreen: React.FC = () => {
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.headerTitle}>Smart Govi</Text>
+          <Text style={styles.headerTitle}>{t('dashboard.title')}</Text>
           <Text style={styles.headerDate}>{dateRangeLabel}</Text>
         </View>
         <TouchableOpacity
@@ -145,12 +145,12 @@ const DashboardScreen: React.FC = () => {
 
         {/* Quick Actions */}
         <View style={styles.quickActionsSection}>
-          <Text style={styles.sectionTitle}>QUICK ACTIONS</Text>
+          <Text style={styles.sectionTitle}>{t('dashboard.quickActions')}</Text>
           <View style={styles.quickActionsGrid}>
             {QUICK_ACTIONS.map((action) => (
               <QuickActionButton
                 key={action.id}
-                title={action.title}
+                title={t(`dashboard.${action.id}`)}
                 icon={action.icon}
                 color={action.color}
                 onPress={() => handleQuickAction(action.route)}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { COLORS, FONTS } from '../../utils/constants';
 
 interface SummaryCardProps {
@@ -19,6 +20,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   incomeCount,
   expenseCount,
 }) => {
+  const { t } = useTranslation();
   const formatCurrency = (amount: number) => {
     return `Rs ${amount.toLocaleString('en-LK')}`;
   };
@@ -26,36 +28,36 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>SUMMARY</Text>
+        <Text style={styles.headerTitle}>{t('dashboard.summary')}</Text>
         <Text style={styles.periodLabel}>{periodLabel}</Text>
       </View>
 
       <View style={styles.row}>
         <View style={styles.leftColumn}>
-          <Text style={styles.label}>Income</Text>
+          <Text style={styles.label}>{t('dashboard.income')}</Text>
           <View style={styles.valueContainer}>
             <Text style={[styles.value, { color: COLORS.success }]}>{formatCurrency(income)}</Text>
             <View style={[styles.indicator, styles.incomeIndicator]} />
           </View>
           {incomeCount !== undefined && (
-            <Text style={styles.countLabel}>{incomeCount} transactions</Text>
+            <Text style={styles.countLabel}>{incomeCount} {t('dashboard.transactions').toLowerCase()}</Text>
           )}
         </View>
 
         <View style={styles.rightColumn}>
-          <Text style={styles.label}>Expense</Text>
+          <Text style={styles.label}>{t('dashboard.expense')}</Text>
           <View style={styles.valueContainer}>
             <Text style={[styles.value, { color: COLORS.error }]}>{formatCurrency(expense)}</Text>
             <View style={[styles.indicator, styles.expenseIndicator]} />
           </View>
           {expenseCount !== undefined && (
-            <Text style={styles.countLabel}>{expenseCount} transactions</Text>
+            <Text style={styles.countLabel}>{expenseCount} {t('dashboard.transactions').toLowerCase()}</Text>
           )}
         </View>
       </View>
 
       <View style={styles.balanceContainer}>
-        <Text style={styles.balanceLabel}>Balance</Text>
+        <Text style={styles.balanceLabel}>{t('dashboard.balance')}</Text>
         <Text style={[
           styles.balanceValue,
           balance >= 0 ? styles.positiveBalance : styles.negativeBalance

@@ -72,8 +72,13 @@
     "startDate": "Start Date",
     "endDate": "End Date",
     "transactions": "Transactions",
-    "income": "income",
-    "expense": "expense"
+    "income": "Income",
+    "expense": "Expense",
+    "summary": "SUMMARY",
+    "quickActions": "QUICK ACTIONS",
+    "report": "Report",
+    "history": "History",
+    "errorLoad": "Failed to load dashboard data"
   },
   "income": {
     "addTitle": "Add Income",

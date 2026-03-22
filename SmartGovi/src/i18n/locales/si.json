@@ -73,7 +73,12 @@
     "endDate": "අවසාන දිනය",
     "transactions": "ගනුදෙනු",
     "income": "ආදායම",
-    "expense": "වියදම"
+    "expense": "වියදම",
+    "summary": "සාරාංශය",
+    "quickActions": "ඉක්මන් ක්‍රියා",
+    "report": "වාර්තාව",
+    "history": "ඉතිහාසය",
+    "errorLoad": "ඩෑෂ්බෝඩ් දත්ත පූරණය කිරීමට අසමත් විය"
   },
   "income": {
     "addTitle": "ආදායම් එකතු කරන්න",
