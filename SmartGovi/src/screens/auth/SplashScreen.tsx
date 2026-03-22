@@ -76,7 +76,7 @@ const SplashScreen: React.FC = () => {
         <View style={styles.logoPlaceholder}>
           <Text style={styles.logoEmoji}>🌾</Text>
         </View>
-        <Text style={styles.appName}>GoviGanana</Text>
+        <Text style={styles.appName}>Smart Govi</Text>
         <Text style={styles.appNameSinhala}>ගොවිගණනය</Text>
       </Animated.View>
 
