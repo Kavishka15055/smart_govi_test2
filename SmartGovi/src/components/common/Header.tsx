@@ -52,7 +52,7 @@ const Header: React.FC<HeaderProps> = ({
             </TouchableOpacity>
           )}
           
-          {rightIcon && (
+          {!!rightIcon && (
             <TouchableOpacity onPress={onRightPress} style={styles.iconButton}>
               <MaterialIcons name={rightIcon as any} size={24} color={COLORS.text.primary} />
             </TouchableOpacity>

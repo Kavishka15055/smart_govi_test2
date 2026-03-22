@@ -38,11 +38,15 @@ const DashboardScreen: React.FC = () => {
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
   const [dateRangeLabel, setDateRangeLabel] = useState('');
 
-  const loadDashboardData = async (range: DateRangeType = currentRange) => {
+  const loadDashboardData = async (
+    range: DateRangeType = currentRange,
+    start?: Date,
+    end?: Date
+  ) => {
     if (!user) return;
-
+ 
     try {
-      const data = await dashboardService.getDashboardData(user.id, range);
+      const data = await dashboardService.getDashboardData(user.id, range, start, end);
       setSummary(data.summary);
       setRecentTransactions(data.recentTransactions);
       setDateRangeLabel(data.dateRange.label);
@@ -67,7 +71,7 @@ const DashboardScreen: React.FC = () => {
 
   const handleFilterApply = (rangeType: string, startDate?: Date, endDate?: Date) => {
     setCurrentRange(rangeType as DateRangeType);
-    loadDashboardData(rangeType as DateRangeType);
+    loadDashboardData(rangeType as DateRangeType, startDate, endDate);
   };
 
   const handleQuickAction = (action: string) => {

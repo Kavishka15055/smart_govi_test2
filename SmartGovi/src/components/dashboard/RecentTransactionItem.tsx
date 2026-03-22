@@ -68,7 +68,7 @@ const RecentTransactionItem: React.FC<RecentTransactionItemProps> = ({
           <Text style={styles.time}>
             {getDayLabel(transaction.date)} • {formatTime(transaction.date)}
           </Text>
-          {transaction.quantity && (
+          {!!transaction.quantity && (
             <Text style={styles.quantity}>
               {transaction.quantity} {transaction.unit}
             </Text>

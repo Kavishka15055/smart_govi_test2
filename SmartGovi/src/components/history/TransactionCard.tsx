@@ -45,7 +45,7 @@ const TransactionCard: React.FC<TransactionCardProps> = ({
               minute: '2-digit',
             })}
           </Text>
-          {transaction.quantity && (
+          {!!transaction.quantity && (
             <Text style={styles.quantity}>
               {transaction.quantity} {transaction.unit}
             </Text>

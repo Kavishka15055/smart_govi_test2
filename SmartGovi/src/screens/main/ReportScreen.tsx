@@ -124,12 +124,6 @@ const ReportScreen: React.FC = () => {
           <MaterialIcons name="filter-list" size={24} color={COLORS.primary} />
           <Text style={styles.filterButtonText}>Filter</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.settingsButton}
-          onPress={() => navigation.navigate('Settings')}
-        >
-          <MaterialIcons name="settings" size={24} color={COLORS.text.secondary} />
-        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -151,7 +145,11 @@ const ReportScreen: React.FC = () => {
           )}
 
           {settings.showMonthlyComparison && summary && summary.monthlyComparison && (
-            <MonthlyComparisonCard data={summary.monthlyComparison} />
+            <MonthlyComparisonCard 
+              data={summary.monthlyComparison} 
+              title={currentRange === 'week' ? "INCOME COMPARISON" : "MONTHLY COMPARISON"}
+              label={currentRange === 'week' ? "Day" : "Month"}
+            />
           )}
 
           {summary && summary.incomeBreakdown && (

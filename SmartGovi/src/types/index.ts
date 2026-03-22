@@ -31,6 +31,10 @@ export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
   FarmSetup: undefined;
+  AddIncome: { transaction?: any };
+  AddExpense: { transaction?: any };
+  TransactionDetail: { transactionId: string; type: 'income' | 'expense' };
+  Settings: undefined;
 };
 
 // Form data types
@@ -288,7 +292,7 @@ export interface RecentTransactionDisplay {
 export type MainTabParamList = {
   Home: undefined;
   ReportTab: undefined;
-  List: undefined;
+  History: undefined;
   Profile: undefined;
 };
 

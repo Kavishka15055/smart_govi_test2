@@ -6,6 +6,7 @@ import {
   orderBy,
   limit,
   getDocs,
+  getDoc,
   addDoc,
   updateDoc,
   deleteDoc,
@@ -16,11 +17,11 @@ import {
   getCountFromServer,
 } from 'firebase/firestore';
 import { 
-  format, 
-  startOfMonth, 
-  endOfMonth, 
+  format,
   eachMonthOfInterval, 
   isSameMonth, 
+  isSameDay,
+  eachDayOfInterval,
   subMonths,
   differenceInDays
 } from 'date-fns';
@@ -69,27 +70,81 @@ class TransactionService {
     }
   }
 
+  // Get Transaction by ID
+  async getTransactionById(type: 'income' | 'expense', id: string): Promise<Transaction | null> {
+    try {
+      const collectionName = type === 'income' ? 'income' : 'expenses';
+      const docRef = doc(db, collectionName, id);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        return {
+          id: docSnap.id,
+          ...data,
+          date: data.date.toDate(),
+          createdAt: data.createdAt.toDate(),
+        } as Transaction;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error getting transaction:', error);
+      throw error;
+    }
+  }
+
   // Get Recent Transactions for Dashboard
   async getRecentTransactions(
     userId: string,
-    limitCount: number = 5
+    limitCount: number = 5,
+    startDate?: Date,
+    endDate?: Date
   ): Promise<RecentTransactionDisplay[]> {
     try {
-      // Get recent income
-      const incomeQuery = query(
+      const startTimestamp = startDate ? Timestamp.fromDate(startDate) : null;
+      const endTimestamp = endDate ? Timestamp.fromDate(endDate) : null;
+
+      // Get income
+      let incomeQuery = query(
         collection(db, 'income'),
         where('userId', '==', userId),
-        orderBy('date', 'desc'),
-        limit(limitCount)
+        orderBy('date', 'desc')
       );
+
+      if (startTimestamp && endTimestamp) {
+        incomeQuery = query(
+          collection(db, 'income'),
+          where('userId', '==', userId),
+          where('date', '>=', startTimestamp),
+          where('date', '<=', endTimestamp),
+          orderBy('date', 'desc')
+        );
+      }
       
-      // Get recent expenses
-      const expenseQuery = query(
+      if (limitCount > 0 && !startTimestamp) {
+        incomeQuery = query(incomeQuery, limit(limitCount));
+      }
+
+      // Get expenses
+      let expenseQuery = query(
         collection(db, 'expenses'),
         where('userId', '==', userId),
-        orderBy('date', 'desc'),
-        limit(limitCount)
+        orderBy('date', 'desc')
       );
+
+      if (startTimestamp && endTimestamp) {
+        expenseQuery = query(
+          collection(db, 'expenses'),
+          where('userId', '==', userId),
+          where('date', '>=', startTimestamp),
+          where('date', '<=', endTimestamp),
+          orderBy('date', 'desc')
+        );
+      }
+
+      if (limitCount > 0 && !startTimestamp) {
+        expenseQuery = query(expenseQuery, limit(limitCount));
+      }
 
       const [incomeSnapshot, expenseSnapshot] = await Promise.all([
         getDocs(incomeQuery),
@@ -273,8 +328,34 @@ class TransactionService {
             balance: monthIncome - monthExpense,
           };
         });
+      } else if (daysDiff >= 1 && daysDiff <= 7) {
+        // Daily Comparison for weekly view
+        const days = eachDayOfInterval({
+          start: startDate,
+          end: endDate,
+        });
 
-        // Calculate percentage changes
+        monthlyComparison = days.map((dayDate) => {
+          const dayIncome = income
+            .filter(item => isSameDay(item.date, dayDate))
+            .reduce((sum, item) => sum + item.amount, 0);
+          
+          const dayExpense = expenses
+            .filter(item => isSameDay(item.date, dayDate))
+            .reduce((sum, item) => sum + item.amount, 0);
+
+          return {
+            month: format(dayDate, 'EEE'), // Mon, Tue, etc.
+            year: dayDate.getFullYear(),
+            income: dayIncome,
+            expense: dayExpense,
+            balance: dayIncome - dayExpense,
+          };
+        });
+      }
+
+      // Calculate percentage changes if comparison data exists
+      if (monthlyComparison && monthlyComparison.length > 1) {
         for (let i = 1; i < monthlyComparison.length; i++) {
           const prev = monthlyComparison[i - 1];
           const curr = monthlyComparison[i];

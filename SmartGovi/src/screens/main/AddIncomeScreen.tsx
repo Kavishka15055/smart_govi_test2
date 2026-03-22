@@ -9,7 +9,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { COLORS, FONTS } from '../../utils/constants';
 import { useAuth } from '../../context/AuthContext';
@@ -30,17 +30,20 @@ type AddIncomeScreenNavigationProp = StackNavigationProp<any, 'AddIncome'>;
 
 const AddIncomeScreen: React.FC = () => {
   const navigation = useNavigation<AddIncomeScreenNavigationProp>();
+  const route = useRoute<RouteProp<any, 'AddIncome'>>();
+  const editTransaction = route.params?.transaction;
+  const isEdit = !!editTransaction;
   const { user } = useAuth();
   const { categories, loading: categoriesLoading } = useCategories('income');
 
   const [formData, setFormData] = useState<IncomeFormData>({
-    date: new Date(),
-    categoryId: '',
-    categoryName: '',
-    quantity: '',
-    unit: 'kg',
-    amount: '',
-    notes: '',
+    date: editTransaction?.date || new Date(),
+    categoryId: editTransaction?.categoryId || '',
+    categoryName: editTransaction?.categoryName || '',
+    quantity: editTransaction?.quantity?.toString() || '',
+    unit: editTransaction?.unit || 'kg',
+    amount: editTransaction?.amount?.toString() || '',
+    notes: editTransaction?.notes || '',
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -119,17 +122,29 @@ const AddIncomeScreen: React.FC = () => {
       const amountNum = parseFloat(formData.amount);
       const quantityNum = parseFloat(formData.quantity);
 
-      await transactionService.addIncome({
-        userId: user.id,
-        date: formData.date,
-        categoryId: formData.categoryId,
-        categoryName: formData.categoryName,
-        quantity: quantityNum,
-        unit: formData.unit,
-        amount: amountNum,
-        notes: formData.notes.trim() || null,
-        type: 'income',
-      });
+      if (isEdit) {
+        await transactionService.updateTransaction('income', editTransaction.id, {
+          date: formData.date,
+          categoryId: formData.categoryId,
+          categoryName: formData.categoryName,
+          quantity: quantityNum,
+          unit: formData.unit,
+          amount: amountNum,
+          notes: formData.notes.trim() || null,
+        });
+      } else {
+        await transactionService.addIncome({
+          userId: user.id,
+          date: formData.date,
+          categoryId: formData.categoryId,
+          categoryName: formData.categoryName,
+          quantity: quantityNum,
+          unit: formData.unit,
+          amount: amountNum,
+          notes: formData.notes.trim() || null,
+          type: 'income',
+        });
+      }
 
       // Store for success modal
       setSubmittedAmount(amountNum);
@@ -185,7 +200,11 @@ const AddIncomeScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Add Income" showBack onBackPress={() => navigation.goBack()} />
+      <Header 
+        title={isEdit ? "Edit Income" : "Add Income"} 
+        showBack 
+        onBackPress={() => navigation.goBack()} 
+      />
       
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -245,7 +264,7 @@ const AddIncomeScreen: React.FC = () => {
 
             {/* Submit Button */}
             <Button
-              title="Save Income"
+              title={isEdit ? "Update Income" : "Save Income"}
               onPress={handleSubmit}
               size="large"
               loading={isSubmitting}
@@ -262,7 +281,8 @@ const AddIncomeScreen: React.FC = () => {
         type="income"
         amount={submittedAmount}
         categoryName={submittedCategory}
-        onClose={handleSuccessClose}
+        isUpdate={isEdit}
+        onClose={isEdit ? () => navigation.goBack() : handleSuccessClose}
         onViewHistory={handleViewHistory}
         onAddAnother={handleAddAnother}
       />

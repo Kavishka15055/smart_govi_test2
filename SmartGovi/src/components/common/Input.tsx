@@ -78,7 +78,7 @@ const Input: React.FC<InputProps> = ({
           !editable && styles.disabled,
         ]}
       >
-        {icon && (
+        {!!icon && (
           <MaterialIcons
             name={icon as any}
             size={20}
