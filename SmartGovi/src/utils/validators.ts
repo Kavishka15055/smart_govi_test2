@@ -16,15 +16,15 @@ export const validatePassword = (password: string): {
   const errors: string[] = [];
   
   if (password.length < 6) {
-    errors.push('Password must be at least 6 characters');
+    errors.push('auth.passwordMinLength');
   }
   
   if (!/[A-Z]/.test(password)) {
-    errors.push('Password must contain at least one uppercase letter');
+    errors.push('auth.passwordNoUppercase');
   }
   
   if (!/[0-9]/.test(password)) {
-    errors.push('Password must contain at least one number');
+    errors.push('auth.passwordNoNumber');
   }
   
   return {
@@ -40,19 +40,19 @@ export const validateSignUpForm = (data: any): {
   const errors: Record<string, string> = {};
   
   if (!data.fullName || data.fullName.trim().length < 2) {
-    errors.fullName = 'Full name is required (min 2 characters)';
+    errors.fullName = 'auth.fullNameMinLength';
   }
   
   if (!data.phoneNumber || !validatePhoneNumber(data.phoneNumber)) {
-    errors.phoneNumber = 'Valid Sri Lankan phone number is required';
+    errors.phoneNumber = 'auth.invalidPhoneFormat';
   }
   
   if (!data.email || !validateEmail(data.email)) {
-    errors.email = 'Valid email address is required';
+    errors.email = 'auth.invalidEmailAddress';
   }
   
   if (!data.password) {
-    errors.password = 'Password is required';
+    errors.password = 'auth.passwordRequired';
   } else {
     const passwordValidation = validatePassword(data.password);
     if (!passwordValidation.isValid) {
@@ -61,7 +61,7 @@ export const validateSignUpForm = (data: any): {
   }
   
   if (data.password !== data.confirmPassword) {
-    errors.confirmPassword = 'Passwords do not match';
+    errors.confirmPassword = 'auth.passwordsDoNotMatch';
   }
   
   return {

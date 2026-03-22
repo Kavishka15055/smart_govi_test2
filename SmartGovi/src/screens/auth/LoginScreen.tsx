@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useTranslation } from 'react-i18next';
 import { COLORS, FONTS } from '../../utils/constants';
 import { AuthStackParamList } from '../../types';
 import { useAuth } from '../../context/AuthContext';
@@ -23,6 +24,7 @@ type LoginScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Login'
 
 const LoginScreen: React.FC = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
+  const { t } = useTranslation();
   const { login, isLoading, error, clearError } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -35,17 +37,17 @@ const LoginScreen: React.FC = () => {
     let isValid = true;
     
     if (!email) {
-      setEmailError('Email is required');
+      setEmailError(t('auth.emailRequired'));
       isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailError('Invalid email format');
+      setEmailError(t('auth.invalidEmailFormat'));
       isValid = false;
     } else {
       setEmailError('');
     }
     
     if (!password) {
-      setPasswordError('Password is required');
+      setPasswordError(t('auth.passwordRequired'));
       isValid = false;
     } else {
       setPasswordError('');
@@ -72,7 +74,7 @@ const LoginScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Smart Govi" showBack onBackPress={() => navigation.goBack()} />
+      <Header title={t('dashboard.title')} showBack onBackPress={() => navigation.goBack()} />
       
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -83,8 +85,8 @@ const LoginScreen: React.FC = () => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
-            <Text style={styles.title}>Login to your account</Text>
-            <Text style={styles.subtitle}>ඔබගේ ගිණුමට පිවිසෙන්න</Text>
+            <Text style={styles.title}>{t('auth.login')}</Text>
+            <Text style={styles.subtitle}>{t('splash.tagline')}</Text>
 
             {error && (
               <View style={styles.errorContainer}>
@@ -94,14 +96,14 @@ const LoginScreen: React.FC = () => {
 
             <View style={styles.form}>
               <Input
-                label="Email / ඊමේල් ලිපිනය"
+                label={t('auth.email')}
                 value={email}
                 onChangeText={(text) => {
                   setEmail(text);
                   setEmailError('');
                   clearError();
                 }}
-                placeholder="Enter email..."
+                placeholder={t('auth.email')}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 icon="email"
@@ -109,14 +111,14 @@ const LoginScreen: React.FC = () => {
               />
 
               <Input
-                label="Password / මුරපදය"
+                label={t('auth.password')}
                 value={password}
                 onChangeText={(text) => {
                   setPassword(text);
                   setPasswordError('');
                   clearError();
                 }}
-                placeholder="Enter password..."
+                placeholder={t('auth.password')}
                 secureTextEntry
                 icon="lock"
                 error={passwordError}
@@ -129,11 +131,11 @@ const LoginScreen: React.FC = () => {
                 <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
                   {rememberMe && <Text style={styles.checkmark}>✓</Text>}
                 </View>
-                <Text style={styles.rememberMeText}>Remember me / මා මතක තබා ගන්න</Text>
+                <Text style={styles.rememberMeText}>{t('auth.rememberMe')}</Text>
               </TouchableOpacity>
 
               <Button
-                title="Login / පිවිසෙන්න"
+                title={t('auth.login')}
                 onPress={handleLogin}
                 size="large"
                 loading={isLoading}
@@ -142,14 +144,14 @@ const LoginScreen: React.FC = () => {
 
               <TouchableOpacity onPress={handleForgotPassword} style={styles.forgotButton}>
                 <Text style={styles.forgotText}>
-                  Forgot Password? / මුරපදය අමතක වුණාද?
+                  {t('auth.forgotPassword')}
                 </Text>
               </TouchableOpacity>
 
               <View style={styles.signupContainer}>
-                <Text style={styles.signupText}>Don't have an account? / </Text>
+                <Text style={styles.signupText}>{t('auth.noAccount')} </Text>
                 <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                  <Text style={styles.signupLink}>Sign Up</Text>
+                  <Text style={styles.signupLink}>{t('auth.signup')}</Text>
                 </TouchableOpacity>
               </View>
             </View>

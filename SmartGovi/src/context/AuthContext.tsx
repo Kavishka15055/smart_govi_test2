@@ -3,6 +3,8 @@ import { User as FirebaseUser } from 'firebase/auth';
 import { authService } from '../services/authService';
 import { User, AuthState } from '../types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
+import { getLocalizedError } from '../utils/errors';
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string, rememberMe: boolean) => Promise<void>;
@@ -27,6 +29,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const { t } = useTranslation();
   const [state, setState] = useState<AuthState>({
     user: null,
     isLoading: true,
@@ -77,10 +80,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         error: null,
       });
     } catch (error: any) {
+      const errorMessage = getLocalizedError(error, t);
+
       setState({
         user: null,
         isLoading: false,
-        error: error.message || 'Login failed',
+        error: errorMessage,
       });
       throw error;
     }
@@ -97,10 +102,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         error: null,
       });
     } catch (error: any) {
+      const errorMessage = getLocalizedError(error, t);
+
       setState({
         user: null,
         isLoading: false,
-        error: error.message || 'Sign up failed',
+        error: errorMessage,
       });
       throw error;
     }

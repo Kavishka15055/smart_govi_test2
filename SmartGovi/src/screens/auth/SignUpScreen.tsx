@@ -13,8 +13,10 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { COLORS, FONTS } from '../../utils/constants';
 import { AuthStackParamList, SignUpFormData } from '../../types';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { validateSignUpForm, validatePhoneNumber } from '../../utils/validators';
+import { getLocalizedError } from '../../utils/errors';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
 import Header from '../../components/common/Header';
@@ -23,6 +25,7 @@ type SignUpScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'SignU
 
 const SignUpScreen: React.FC = () => {
   const navigation = useNavigation<SignUpScreenNavigationProp>();
+  const { t } = useTranslation();
   const { signUp, isLoading } = useAuth();
 
   const [formData, setFormData] = useState<SignUpFormData>({
@@ -61,13 +64,14 @@ const SignUpScreen: React.FC = () => {
       // Navigate to Farm Setup after successful signup
       navigation.navigate('FarmSetup');
     } catch (error: any) {
-      Alert.alert('Sign Up Failed', error.message);
+      const errorMessage = getLocalizedError(error, t);
+      Alert.alert(t('auth.signup') + ' ' + t('common.error'), errorMessage);
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Smart Govi" showBack onBackPress={() => navigation.goBack()} />
+      <Header title={t('dashboard.title')} showBack onBackPress={() => navigation.goBack()} />
       
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -78,62 +82,62 @@ const SignUpScreen: React.FC = () => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
-            <Text style={styles.title}>Create New Account</Text>
-            <Text style={styles.subtitle}>නව ගිණුමක් සාදන්න</Text>
+            <Text style={styles.title}>{t('auth.signup')}</Text>
+            <Text style={styles.subtitle}>{t('splash.tagline')}</Text>
 
             <View style={styles.form}>
               <Input
-                label="Full Name / සම්පූර්ණ නම"
+                label={t('auth.fullName')}
                 value={formData.fullName}
                 onChangeText={(text) => handleChange('fullName', text)}
-                placeholder="Enter your full name"
+                placeholder={t('auth.fullName')}
                 icon="person"
-                error={errors.fullName}
+                error={errors.fullName ? t(errors.fullName) : undefined}
               />
 
               <Input
-                label="Phone Number / දුරකථන අංකය"
+                label={t('auth.phoneNumber')}
                 value={formData.phoneNumber}
                 onChangeText={(text) => handleChange('phoneNumber', text)}
                 placeholder="07XXXXXXXX"
                 keyboardType="phone-pad"
                 icon="phone"
-                error={errors.phoneNumber}
+                error={errors.phoneNumber ? t(errors.phoneNumber) : undefined}
               />
 
               <Input
-                label="Email / ඊමේල් ලිපිනය"
+                label={t('auth.email')}
                 value={formData.email}
                 onChangeText={(text) => handleChange('email', text)}
-                placeholder="Enter your email"
+                placeholder={t('auth.email')}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 icon="email"
-                error={errors.email}
+                error={errors.email ? t(errors.email) : undefined}
               />
 
               <Input
-                label="Password / මුරපදය"
+                label={t('auth.password')}
                 value={formData.password}
                 onChangeText={(text) => handleChange('password', text)}
-                placeholder="Create a password"
+                placeholder={t('auth.password')}
                 secureTextEntry
                 icon="lock"
-                error={errors.password}
+                error={errors.password ? t(errors.password) : undefined}
               />
 
               <Input
-                label="Confirm Password / මුරපදය තහවුරු කරන්න"
+                label={t('auth.confirmPassword')}
                 value={formData.confirmPassword}
                 onChangeText={(text) => handleChange('confirmPassword', text)}
-                placeholder="Confirm your password"
+                placeholder={t('auth.confirmPassword')}
                 secureTextEntry
                 icon="lock"
-                error={errors.confirmPassword}
+                error={errors.confirmPassword ? t(errors.confirmPassword) : undefined}
               />
 
               <Button
-                title="Sign Up / ලියාපදිංචි වන්න"
+                title={t('auth.signup')}
                 onPress={handleSignUp}
                 size="large"
                 loading={isLoading}
@@ -142,12 +146,12 @@ const SignUpScreen: React.FC = () => {
               />
 
               <View style={styles.loginContainer}>
-                <Text style={styles.loginText}>Already have an account? / </Text>
+                <Text style={styles.loginText}>{t('auth.haveAccount')} </Text>
                 <Text
                   style={styles.loginLink}
                   onPress={() => navigation.navigate('Login')}
                 >
-                  Login
+                  {t('auth.login')}
                 </Text>
               </View>
             </View>

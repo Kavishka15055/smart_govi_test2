@@ -15,7 +15,7 @@ import { COLORS, FONTS } from '../../utils/constants';
 import { useAuth } from '../../context/AuthContext';
 import { useCategories } from '../../hooks/useCategories';
 import { transactionService } from '../../services/transactionService';
-import { ExpenseFormData } from '../../types';
+import { ExpenseFormData, RootStackParamList } from '../../types';
 import { validateExpenseForm, sanitizeAmount } from '../../utils/transactionValidators';
 import Header from '../../components/common/Header';
 import Input from '../../components/common/Input';
@@ -27,11 +27,11 @@ import SuccessModal from '../../components/common/SuccessModal';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { useTranslation } from 'react-i18next';
 
-type AddExpenseScreenNavigationProp = StackNavigationProp<any, 'AddExpense'>;
+type AddExpenseScreenNavigationProp = StackNavigationProp<RootStackParamList, 'AddExpense'>;
 
 const AddExpenseScreen: React.FC = () => {
   const navigation = useNavigation<AddExpenseScreenNavigationProp>();
-  const route = useRoute<RouteProp<any, 'AddExpense'>>();
+  const route = useRoute<RouteProp<RootStackParamList, 'AddExpense'>>();
   const editTransaction = route.params?.transaction;
   const isEdit = !!editTransaction;
   const { user } = useAuth();
@@ -166,7 +166,7 @@ const AddExpenseScreen: React.FC = () => {
 
   const handleViewHistory = () => {
     setShowSuccessModal(false);
-    navigation.navigate('History');
+    navigation.navigate('Main', { screen: 'History' } as any);
   };
 
   const handleAddAnother = () => {

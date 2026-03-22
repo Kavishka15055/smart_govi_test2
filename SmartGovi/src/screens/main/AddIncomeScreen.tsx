@@ -15,7 +15,7 @@ import { COLORS, FONTS } from '../../utils/constants';
 import { useAuth } from '../../context/AuthContext';
 import { useCategories } from '../../hooks/useCategories';
 import { transactionService } from '../../services/transactionService';
-import { IncomeFormData, PickerCategory } from '../../types';
+import { IncomeFormData, PickerCategory, RootStackParamList } from '../../types';
 import { validateIncomeForm, sanitizeAmount, sanitizeQuantity } from '../../utils/transactionValidators';
 import Header from '../../components/common/Header';
 import Input from '../../components/common/Input';
@@ -27,11 +27,11 @@ import SuccessModal from '../../components/common/SuccessModal';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { useTranslation } from 'react-i18next';
 
-type AddIncomeScreenNavigationProp = StackNavigationProp<any, 'AddIncome'>;
+type AddIncomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'AddIncome'>;
 
 const AddIncomeScreen: React.FC = () => {
   const navigation = useNavigation<AddIncomeScreenNavigationProp>();
-  const route = useRoute<RouteProp<any, 'AddIncome'>>();
+  const route = useRoute<RouteProp<RootStackParamList, 'AddIncome'>>();
   const editTransaction = route.params?.transaction;
   const isEdit = !!editTransaction;
   const { user } = useAuth();
@@ -178,7 +178,7 @@ const AddIncomeScreen: React.FC = () => {
 
   const handleViewHistory = () => {
     setShowSuccessModal(false);
-    navigation.navigate('History');
+    navigation.navigate('Main', { screen: 'History' } as any);
   };
 
   const handleAddAnother = () => {

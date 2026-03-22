@@ -83,7 +83,7 @@ const SplashScreen: React.FC = () => {
           <Text style={styles.logoEmoji}>🌾</Text>
         </View>
         <Text style={styles.appName}>Smart Govi</Text>
-        <Text style={styles.appNameSinhala}>ගොවිගණනය</Text>
+        <Text style={styles.appNameSinhala}>ස්මාර්ට් ගොවි</Text>
       </Animated.View>
 
       <View style={styles.progressContainer}>

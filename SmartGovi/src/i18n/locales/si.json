@@ -46,8 +46,30 @@
     "forgotPassword": "මුරපදය අමතකද?",
     "noAccount": "ගිනුමක් නැතිද?",
     "haveAccount": "දැනටමත් ගිනුමක් තිබේද?",
+    "emailRequired": "ඊමේල් ලිපිනය අවශ්‍යයි",
+    "invalidEmailFormat": "ඊමේල් ලිපිනය නිවැරදි නැත",
+    "invalidEmailAddress": "නිවැරදි විද්‍යුත් තැපැල් ලිපිනයක් අවශ්‍යයි",
+    "passwordRequired": "මුරපදය අවශ්‍යයි",
+    "passwordMinLength": "මුරපදය අවම වශයෙන් අක්ෂර 6 ක් විය යුතුය",
+    "passwordNoUppercase": "මුරපදයට අවම වශයෙන් එක් ලොකු අකුරක් (uppercase) තිබිය යුතුය",
+    "passwordNoNumber": "මුරපදයට අවම වශයෙන් එක් අංකයක් තිබිය යුතුය",
+    "fullNameRequired": "සම්පූර්ණ නම අවශ්‍යයි",
+    "fullNameMinLength": "සම්පූර්ණ නම අවම වශයෙන් අක්ෂර 2 ක් විය යුතුය",
+    "phoneNumberRequired": "දුරකතන අංකය අවශ්‍යයි",
+    "invalidPhoneFormat": "නිවැරදි ශ්‍රී ලාංකික දුරකතන අංකයක් අවශ්‍යයි",
+    "confirmPasswordRequired": "කරුණාකර මුරපදය තහවුරු කරන්න",
+    "passwordsDoNotMatch": "මුරපද නොගැලපේ",
     "logoutConfirm": "ඔබට ඉවත් වීමට අවශ්‍යද?",
-    "logoutFrom": "Smart Govi වෙතින් ඉවත් වන්න"
+    "logoutFrom": "Smart Govi වෙතින් ඉවත් වන්න",
+    "errors": {
+      "invalidCredential": "වැරදි විද්‍යුත් තැපෑලක් හෝ මුරපදයකි. කරුණාකර නැවත උත්සාහ කරන්න.",
+      "userNotFound": "මෙම විද්‍යුත් තැපෑලෙන් පරිශීලකයෙකු හමු නොවීය.",
+      "wrongPassword": "මුරපදය වැරදියි.",
+      "invalidEmail": "විද්‍යුත් තැපැල් ලිපිනය නිවැරදි නැත.",
+      "emailInUse": "මෙම විද්‍යුත් තැපැල් ලිපිනය දැනටමත් ලියාපදිංචි කර ඇත.",
+      "weakPassword": "මුරපදය අවම වශයෙන් අක්ෂර 6 ක් විය යුතුය.",
+      "generic": "පද්ධතියට ඇතුළු වීමට අපොහොසත් විය. කරුණාකර නැවත උත්සාහ කරන්න."
+    }
   },
   "dashboard": {
     "title": "Smart Govi",
