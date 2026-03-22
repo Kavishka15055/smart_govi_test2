@@ -6,6 +6,7 @@ import {
   orderBy,
   limit,
   getDocs,
+  getDoc,
   addDoc,
   updateDoc,
   deleteDoc,
@@ -65,6 +66,29 @@ class TransactionService {
       return docRef.id;
     } catch (error) {
       console.error('Error adding expense:', error);
+      throw error;
+    }
+  }
+
+  // Get Transaction by ID
+  async getTransactionById(type: 'income' | 'expense', id: string): Promise<Transaction | null> {
+    try {
+      const collectionName = type === 'income' ? 'income' : 'expenses';
+      const docRef = doc(db, collectionName, id);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        return {
+          id: docSnap.id,
+          ...data,
+          date: data.date.toDate(),
+          createdAt: data.createdAt.toDate(),
+        } as Transaction;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error getting transaction:', error);
       throw error;
     }
   }

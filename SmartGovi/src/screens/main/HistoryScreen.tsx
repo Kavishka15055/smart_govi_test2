@@ -129,7 +129,7 @@ const HistoryScreen: React.FC = () => {
       />
 
       {/* Active Filters Indicator */}
-      {(searchQuery || typeFilter !== 'all') && (
+      {!!(searchQuery || typeFilter !== 'all') && (
         <View style={styles.activeFilters}>
           <Text style={styles.activeFiltersText}>
             {searchQuery && `Search: "${searchQuery}"`}

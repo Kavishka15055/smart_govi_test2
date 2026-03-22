@@ -112,7 +112,7 @@ const TransactionDetailModal: React.FC<TransactionDetailProps> = ({
                     value={formatDateForDisplay(transaction.date)}
                   />
 
-                  {isIncome && transaction.quantity && (
+                  {isIncome && !!transaction.quantity && (
                     <DetailRow
                       icon="straighten"
                       label="Quantity"
@@ -129,7 +129,7 @@ const TransactionDetailModal: React.FC<TransactionDetailProps> = ({
                     />
                   ) : null}
 
-                  {!isIncome && transaction.receiptUrl && (
+                  {!isIncome && !!transaction.receiptUrl && (
                     <TouchableOpacity
                       style={styles.receiptButton}
                       onPress={handleViewReceipt}
