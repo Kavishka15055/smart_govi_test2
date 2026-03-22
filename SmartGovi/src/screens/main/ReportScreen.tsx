@@ -25,12 +25,14 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useSettings } from '../../context/SettingsContext';
 import MonthlyComparisonCard from '../../components/dashboard/MonthlyComparisonCard';
 import { pdfService } from '../../services/pdfService';
+import { useTranslation } from 'react-i18next';
 
 const ReportScreen: React.FC = () => {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { user } = useAuth();
   const { settings } = useSettings();
+  const { t } = useTranslation();
   
   // Quick action from dashboard passes `range` in params
   const initialRange: DateRangeType = route.params?.range || '3months';
@@ -53,7 +55,7 @@ const ReportScreen: React.FC = () => {
       setRecentTransactions(data.recentTransactions || []);
       setDateRangeLabel(data.dateRange.label);
     } catch (error) {
-      Alert.alert('Error', 'Failed to load report data');
+      Alert.alert(t('common.error'), 'Failed to load report data');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -91,14 +93,14 @@ const ReportScreen: React.FC = () => {
         dateRangeLabel,
       });
     } catch (error) {
-      Alert.alert('Error', 'Failed to generate PDF report');
+      Alert.alert(t('common.error'), 'Failed to generate PDF report');
     } finally {
       setPdfLoading(false);
     }
   };
 
   if (loading) {
-    return <LoadingSpinner fullScreen message="Generating Report..." />;
+    return <LoadingSpinner fullScreen message={t('common.loading')} />;
   }
 
   return (
@@ -114,7 +116,7 @@ const ReportScreen: React.FC = () => {
           </TouchableOpacity>
         )}
         <View style={styles.headerTitleContainer}>
-          <Text style={styles.headerTitle}>Reports</Text>
+          <Text style={styles.headerTitle}>{t('navigation.reports')}</Text>
           <Text style={styles.headerDate}>{dateRangeLabel}</Text>
         </View>
         <TouchableOpacity
@@ -122,7 +124,7 @@ const ReportScreen: React.FC = () => {
           onPress={() => setFilterModalVisible(true)}
         >
           <MaterialIcons name="filter-list" size={24} color={COLORS.primary} />
-          <Text style={styles.filterButtonText}>Filter</Text>
+          <Text style={styles.filterButtonText}>{t('report.filter')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -147,14 +149,14 @@ const ReportScreen: React.FC = () => {
           {settings.showMonthlyComparison && summary && summary.monthlyComparison && (
             <MonthlyComparisonCard 
               data={summary.monthlyComparison} 
-              title={currentRange === 'week' ? "INCOME COMPARISON" : "MONTHLY COMPARISON"}
-              label={currentRange === 'week' ? "Day" : "Month"}
+              title={currentRange === 'week' ? t('report.incomeComparison') : t('report.monthlyComparison')}
+              label={currentRange === 'week' ? t('report.day') : t('report.month')}
             />
           )}
 
           {summary && summary.incomeBreakdown && (
             <FinancialPieChart
-              title="INCOME DISTRIBUTION"
+              title={t('report.incomeDistribution')}
               data={summary.incomeBreakdown}
               type="income"
             />
@@ -162,7 +164,7 @@ const ReportScreen: React.FC = () => {
 
           {summary && summary.expenseBreakdown && (
             <FinancialPieChart
-              title="EXPENSE DISTRIBUTION"
+              title={t('report.expenseDistribution')}
               data={summary.expenseBreakdown}
               type="expense"
             />
@@ -170,7 +172,7 @@ const ReportScreen: React.FC = () => {
 
           {summary && summary.incomeBreakdown && (
             <CategoryBreakdownCard 
-              title="INCOME BREAKDOWN" 
+              title={t('report.incomeBreakdown')} 
               data={summary.incomeBreakdown} 
               color={COLORS.success} 
             />
@@ -178,7 +180,7 @@ const ReportScreen: React.FC = () => {
 
           {summary && summary.expenseBreakdown && (
             <CategoryBreakdownCard 
-              title="EXPENSE BREAKDOWN" 
+              title={t('report.expenseBreakdown')} 
               data={summary.expenseBreakdown} 
               color={COLORS.error} 
             />
@@ -186,14 +188,14 @@ const ReportScreen: React.FC = () => {
 
           <View style={styles.recentSection}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>REPORT TRANSACTIONS</Text>
+              <Text style={styles.sectionTitle}>{t('report.reportTransactions')}</Text>
             </View>
 
             {recentTransactions.length === 0 ? (
               <EmptyState
                 icon="📊"
-                title="No Data"
-                message={`No transactions found for ${dateRangeLabel}`}
+                title={t('report.noData')}
+                message={t('report.noDataDetail')}
               />
             ) : (
               recentTransactions.map((transaction) => (
@@ -222,7 +224,7 @@ const ReportScreen: React.FC = () => {
               ) : (
                 <>
                   <MaterialIcons name="share" size={20} color={COLORS.white} />
-                  <Text style={styles.pdfButtonText}>Share Report as PDF</Text>
+                  <Text style={styles.pdfButtonText}>{t('report.shareReport')}</Text>
                 </>
               )}
             </TouchableOpacity>

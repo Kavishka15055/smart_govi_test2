@@ -139,9 +139,9 @@ const ProfileScreen: React.FC = () => {
       await storageService.deleteProfilePhoto(user.profilePhotoUrl);
       await authService.updateUserProfile(user.id, { profilePhotoUrl: "" });
       await updateUser({ profilePhotoUrl: "" });
-      Alert.alert('Success', 'Profile photo removed successfully!');
+      Alert.alert(t('common.success'), 'Profile photo removed successfully!');
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to remove profile photo.');
+      Alert.alert(t('common.error'), error.message || 'Failed to remove profile photo.');
     } finally {
       setIsUploading(false);
     }
@@ -180,7 +180,7 @@ const ProfileScreen: React.FC = () => {
         uploadPhoto(result.assets[0].uri);
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to select image');
+      Alert.alert(t('common.error'), 'Failed to select image');
     }
   };
 
@@ -191,9 +191,9 @@ const ProfileScreen: React.FC = () => {
       const downloadURL = await storageService.uploadProfilePhoto(uri, user.id);
       await authService.updateUserProfile(user.id, { profilePhotoUrl: downloadURL });
       await updateUser({ profilePhotoUrl: downloadURL });
-      Alert.alert('Success', 'Profile photo updated successfully!');
+      Alert.alert(t('common.success'), 'Profile photo updated successfully!');
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to upload profile photo. Please try again.');
+      Alert.alert(t('common.error'), error.message || 'Failed to upload profile photo. Please try again.');
     } finally {
       setIsUploading(false);
     }
@@ -227,14 +227,14 @@ const ProfileScreen: React.FC = () => {
   if (!user) return null;
 
   if (isUploading) {
-    return <LoadingSpinner fullScreen message="Uploading Profile Photo..." />;
+    return <LoadingSpinner fullScreen message={t('common.loading')} />;
   }
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Profile</Text>
+        <Text style={styles.headerTitle}>{t('profile.title')}</Text>
         <TouchableOpacity onPress={() => navigation.navigate('EditProfile')}>
           <MaterialIcons name="edit" size={24} color={COLORS.primary} />
         </TouchableOpacity>
@@ -271,17 +271,17 @@ const ProfileScreen: React.FC = () => {
 
         {/* Info Items List */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>ACCOUNT DETAILS</Text>
+          <Text style={styles.sectionTitle}>{t('profile.accountDetails')}</Text>
           <View style={styles.sectionCard}>
             <InfoItem 
               icon="phone" 
-              label="Phone Number" 
+              label={t('profile.phoneNumber')} 
               value={formatPhoneNumber(user.phoneNumber)} 
             />
             <View style={styles.divider} />
             <InfoItem 
               icon="email" 
-              label="Email Address" 
+              label={t('profile.emailAddress')} 
               value={user.email} 
               valueColor={COLORS.text.secondary}
             />
@@ -289,18 +289,18 @@ const ProfileScreen: React.FC = () => {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>FARM INFORMATION</Text>
+          <Text style={styles.sectionTitle}>{t('profile.farmInformation')}</Text>
           <View style={styles.sectionCard}>
             <InfoItem 
               icon="agriculture" 
-              label="Farm Name" 
-              value={user.farmName || 'My Smart Farm'} 
+              label={t('profile.farmName')} 
+              value={user.farmName || t('profile.mySmartFarm')} 
             />
             <View style={styles.divider} />
             <InfoItem 
               icon="location-on" 
-              label="Location" 
-              value={user.location || 'Not Specified'} 
+              label={t('profile.location')} 
+              value={user.location || t('profile.notSpecified')} 
             />
           </View>
         </View>
@@ -308,7 +308,7 @@ const ProfileScreen: React.FC = () => {
         {/* Farm Setup Details */}
         <View style={styles.section}>
           <View style={styles.sectionHeaderRow}>
-            <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>FARM SETTINGS / DETAILS</Text>
+            <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>{t('profile.farmSettings')}</Text>
             <TouchableOpacity onPress={() => navigation.navigate('EditFarmDetails')} style={styles.sectionEditIcon}>
               <MaterialIcons name="edit" size={18} color={COLORS.primary} />
             </TouchableOpacity>
@@ -322,12 +322,12 @@ const ProfileScreen: React.FC = () => {
             ) : !farmData ? (
               <View style={{ padding: 20 }}>
                 <Text style={styles.emptyText}>
-                  No farm setup found.
+                  {t('profile.noFarmSetup')}
                 </Text>
               </View>
             ) : (
               <View style={{ padding: 16 }}>
-                <Text style={[styles.subHeading, { marginTop: 0 }]}>Farm Types</Text>
+                <Text style={[styles.subHeading, { marginTop: 0 }]}>{t('profile.farmTypes')}</Text>
                 <View style={styles.chipContainer}>
                   {farmData.types && farmData.types.length > 0 ? farmData.types.map(type => {
                     const opt = FARM_TYPE_OPTIONS.find(o => o.id === type);
@@ -337,31 +337,31 @@ const ProfileScreen: React.FC = () => {
                         <Text style={styles.chipText}>{opt?.label || type}</Text>
                       </View>
                     );
-                  }) : <Text style={styles.emptyText}>No farm types selected</Text>}
+                  }) : <Text style={styles.emptyText}>{t('profile.noFarmTypes')}</Text>}
                 </View>
 
                 <View style={styles.dividerContainer} />
 
-                <Text style={styles.subHeading}>Income Sources</Text>
+                <Text style={styles.subHeading}>{t('profile.incomeSources')}</Text>
                 <View style={styles.chipContainer}>
                   {farmData.incomeCategories && farmData.incomeCategories.length > 0 ? farmData.incomeCategories.map(cat => (
                     <View key={cat.id} style={[styles.chip, styles.incomeChip]}>
                       <MaterialIcons name="check-circle" size={14} color="#2E7D32" style={{ marginRight: 4 }} />
                       <Text style={[styles.chipText, { color: '#1B5E20' }]}>{cat.name}</Text>
                     </View>
-                  )) : <Text style={styles.emptyText}>No income sources configured</Text>}
+                  )) : <Text style={styles.emptyText}>{t('profile.noIncomeSources')}</Text>}
                 </View>
 
                 <View style={styles.dividerContainer} />
 
-                <Text style={styles.subHeading}>Expense Categories</Text>
+                <Text style={styles.subHeading}>{t('profile.expenseCategories')}</Text>
                 <View style={styles.chipContainer}>
                   {farmData.expenseCategories && farmData.expenseCategories.length > 0 ? farmData.expenseCategories.map(cat => (
                     <View key={cat.id} style={[styles.chip, styles.expenseChip]}>
                       <MaterialIcons name="check-circle" size={14} color="#C62828" style={{ marginRight: 4 }} />
                       <Text style={[styles.chipText, { color: '#B71C1C' }]}>{cat.name}</Text>
                     </View>
-                  )) : <Text style={styles.emptyText}>No expense categories configured</Text>}
+                  )) : <Text style={styles.emptyText}>{t('profile.noExpenseCategories')}</Text>}
                 </View>
               </View>
             )}
@@ -398,7 +398,7 @@ const ProfileScreen: React.FC = () => {
 
         {/* Actions */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>APP</Text>
+          <Text style={styles.sectionTitle}>{t('profile.app')}</Text>
           <View style={styles.sectionCard}>
             <TouchableOpacity 
               style={styles.actionItem} 
@@ -407,7 +407,7 @@ const ProfileScreen: React.FC = () => {
               <View style={styles.actionIconContainer}>
                 <MaterialIcons name="info-outline" size={22} color={COLORS.primary} />
               </View>
-              <Text style={styles.actionItemText}>About Smart Govi</Text>
+              <Text style={styles.actionItemText}>{t('profile.aboutApp')}</Text>
               <MaterialIcons name="chevron-right" size={24} color={COLORS.border} />
             </TouchableOpacity>
           </View>
@@ -419,13 +419,13 @@ const ProfileScreen: React.FC = () => {
             onPress={handleLogout}
           >
             <MaterialIcons name="logout" size={24} color={COLORS.error} />
-            <Text style={styles.logoutText}>Logout from Smart Govi</Text>
+            <Text style={styles.logoutText}>{t('auth.logoutFrom')}</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.versionText}>Smart Govi v1.0.0</Text>
-          <Text style={styles.tagline}>Your Farm Financial Companion</Text>
+          <Text style={styles.versionText}>{t('profile.version')}</Text>
+          <Text style={styles.tagline}>{t('splash.tagline')}</Text>
         </View>
       </ScrollView>
 
