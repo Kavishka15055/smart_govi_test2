@@ -96,24 +96,55 @@ class TransactionService {
   // Get Recent Transactions for Dashboard
   async getRecentTransactions(
     userId: string,
-    limitCount: number = 5
+    limitCount: number = 5,
+    startDate?: Date,
+    endDate?: Date
   ): Promise<RecentTransactionDisplay[]> {
     try {
-      // Get recent income
-      const incomeQuery = query(
+      const startTimestamp = startDate ? Timestamp.fromDate(startDate) : null;
+      const endTimestamp = endDate ? Timestamp.fromDate(endDate) : null;
+
+      // Get income
+      let incomeQuery = query(
         collection(db, 'income'),
         where('userId', '==', userId),
-        orderBy('date', 'desc'),
-        limit(limitCount)
+        orderBy('date', 'desc')
       );
+
+      if (startTimestamp && endTimestamp) {
+        incomeQuery = query(
+          collection(db, 'income'),
+          where('userId', '==', userId),
+          where('date', '>=', startTimestamp),
+          where('date', '<=', endTimestamp),
+          orderBy('date', 'desc')
+        );
+      }
       
-      // Get recent expenses
-      const expenseQuery = query(
+      if (limitCount > 0 && !startTimestamp) {
+        incomeQuery = query(incomeQuery, limit(limitCount));
+      }
+
+      // Get expenses
+      let expenseQuery = query(
         collection(db, 'expenses'),
         where('userId', '==', userId),
-        orderBy('date', 'desc'),
-        limit(limitCount)
+        orderBy('date', 'desc')
       );
+
+      if (startTimestamp && endTimestamp) {
+        expenseQuery = query(
+          collection(db, 'expenses'),
+          where('userId', '==', userId),
+          where('date', '>=', startTimestamp),
+          where('date', '<=', endTimestamp),
+          orderBy('date', 'desc')
+        );
+      }
+
+      if (limitCount > 0 && !startTimestamp) {
+        expenseQuery = query(expenseQuery, limit(limitCount));
+      }
 
       const [incomeSnapshot, expenseSnapshot] = await Promise.all([
         getDocs(incomeQuery),

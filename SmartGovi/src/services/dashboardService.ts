@@ -83,8 +83,13 @@ class DashboardService {
         dateRange.endDate
       );
 
-      // Get recent transactions (last 5)
-      const recentTransactions = await transactionService.getRecentTransactions(userId, 5);
+      // Get recent transactions (last 5 or all in range)
+      const recentTransactions = await transactionService.getRecentTransactions(
+        userId, 
+        rangeType === 'custom' ? 0 : 5, // Get more for reports if custom, otherwise 5
+        dateRange.startDate,
+        dateRange.endDate
+      );
 
       return {
         summary,

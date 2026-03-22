@@ -9,7 +9,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { COLORS, FONTS } from '../../utils/constants';
 import { useAuth } from '../../context/AuthContext';
@@ -30,15 +30,18 @@ type AddExpenseScreenNavigationProp = StackNavigationProp<any, 'AddExpense'>;
 
 const AddExpenseScreen: React.FC = () => {
   const navigation = useNavigation<AddExpenseScreenNavigationProp>();
+  const route = useRoute<RouteProp<any, 'AddExpense'>>();
+  const editTransaction = route.params?.transaction;
+  const isEdit = !!editTransaction;
   const { user } = useAuth();
   const { categories, loading: categoriesLoading } = useCategories('expense');
 
   const [formData, setFormData] = useState<ExpenseFormData>({
-    date: new Date(),
-    categoryId: '',
-    categoryName: '',
-    amount: '',
-    notes: '',
+    date: editTransaction?.date || new Date(),
+    categoryId: editTransaction?.categoryId || '',
+    categoryName: editTransaction?.categoryName || '',
+    amount: editTransaction?.amount?.toString() || '',
+    notes: editTransaction?.notes || '',
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -110,16 +113,27 @@ const AddExpenseScreen: React.FC = () => {
         // receiptUrl = await uploadImage(selectedImage);
       }
 
-      await transactionService.addExpense({
-        userId: user.id,
-        date: formData.date,
-        categoryId: formData.categoryId,
-        categoryName: formData.categoryName,
-        amount: amountNum,
-        notes: formData.notes.trim() || null,
-        receiptUrl: receiptUrl || null,
-        type: 'expense',
-      });
+      if (isEdit) {
+        await transactionService.updateTransaction('expense', editTransaction.id, {
+          date: formData.date,
+          categoryId: formData.categoryId,
+          categoryName: formData.categoryName,
+          amount: amountNum,
+          notes: formData.notes.trim() || null,
+          receiptUrl: receiptUrl || editTransaction.receiptUrl || null,
+        });
+      } else {
+        await transactionService.addExpense({
+          userId: user.id,
+          date: formData.date,
+          categoryId: formData.categoryId,
+          categoryName: formData.categoryName,
+          amount: amountNum,
+          notes: formData.notes.trim() || null,
+          receiptUrl: receiptUrl || null,
+          type: 'expense',
+        });
+      }
 
       // Store for success modal
       setSubmittedAmount(amountNum);
@@ -173,7 +187,11 @@ const AddExpenseScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Add Expense" showBack onBackPress={() => navigation.goBack()} />
+      <Header 
+        title={isEdit ? "Edit Expense" : "Add Expense"} 
+        showBack 
+        onBackPress={() => navigation.goBack()} 
+      />
       
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -231,7 +249,7 @@ const AddExpenseScreen: React.FC = () => {
 
             {/* Submit Button */}
             <Button
-              title="Save Expense"
+              title={isEdit ? "Update Expense" : "Save Expense"}
               onPress={handleSubmit}
               size="large"
               loading={isSubmitting}
@@ -248,7 +266,8 @@ const AddExpenseScreen: React.FC = () => {
         type="expense"
         amount={submittedAmount}
         categoryName={submittedCategory}
-        onClose={handleSuccessClose}
+        isUpdate={isEdit}
+        onClose={isEdit ? () => navigation.goBack() : handleSuccessClose}
         onViewHistory={handleViewHistory}
         onAddAnother={handleAddAnother}
       />

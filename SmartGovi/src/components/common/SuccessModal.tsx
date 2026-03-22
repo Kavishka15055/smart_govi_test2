@@ -16,6 +16,7 @@ interface SuccessModalProps {
   type: 'income' | 'expense';
   amount: number;
   categoryName: string;
+  isUpdate?: boolean;
   onClose: () => void;
   onViewHistory: () => void;
   onAddAnother: () => void;
@@ -26,6 +27,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
   type,
   amount,
   categoryName,
+  isUpdate = false,
   onClose,
   onViewHistory,
   onAddAnother,
@@ -57,9 +59,9 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
                 </View>
               </View>
 
-              <Text style={styles.title}>Success!</Text>
+              <Text style={styles.title}>{isUpdate ? 'Updated!' : 'Success!'}</Text>
               <Text style={styles.message}>
-                {isIncome ? 'Income' : 'Expense'} added successfully
+                {isIncome ? 'Income' : 'Expense'} {isUpdate ? 'updated' : 'added'} successfully
               </Text>
 
               <View style={styles.detailsContainer}>
@@ -76,11 +78,20 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
                   variant="outline"
                   style={styles.button}
                 />
-                <Button
-                  title={`Add Another ${isIncome ? 'Income' : 'Expense'}`}
-                  onPress={onAddAnother}
-                  style={styles.button}
-                />
+                {!isUpdate && (
+                  <Button
+                    title={`Add Another ${isIncome ? 'Income' : 'Expense'}`}
+                    onPress={onAddAnother}
+                    style={styles.button}
+                  />
+                )}
+                {isUpdate && (
+                  <Button
+                    title="Done"
+                    onPress={onClose}
+                    style={styles.button}
+                  />
+                )}
               </View>
             </View>
           </TouchableWithoutFeedback>
