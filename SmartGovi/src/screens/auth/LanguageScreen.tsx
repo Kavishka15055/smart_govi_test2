@@ -13,6 +13,7 @@ import { COLORS, FONTS, STORAGE_KEYS } from '../../utils/constants';
 import { AuthStackParamList, Language } from '../../types';
 import Button from '../../components/common/Button';
 import Header from '../../components/common/Header';
+import i18n from '../../i18n';
 
 type LanguageScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Language'>;
 
@@ -20,14 +21,17 @@ const LanguageScreen: React.FC = () => {
   const navigation = useNavigation<LanguageScreenNavigationProp>();
   const [selectedLanguage, setSelectedLanguage] = useState<Language>('en');
 
-  const handleLanguageSelect = async (lang: Language) => {
+  const handleSelect = (lang: Language) => {
     setSelectedLanguage(lang);
-    await AsyncStorage.setItem(STORAGE_KEYS.LANGUAGE, lang);
-    
-    // Navigate to Login after selection
-    setTimeout(() => {
-      navigation.navigate('Login');
-    }, 300);
+  };
+
+  const handleContinue = async () => {
+    // Persist choice
+    await AsyncStorage.setItem(STORAGE_KEYS.LANGUAGE, selectedLanguage);
+    // Apply to i18n immediately
+    await i18n.changeLanguage(selectedLanguage);
+    // Navigate to Login
+    navigation.navigate('Login');
   };
 
   return (
@@ -46,7 +50,7 @@ const LanguageScreen: React.FC = () => {
               styles.languageCard,
               selectedLanguage === 'en' && styles.selectedCard,
             ]}
-            onPress={() => handleLanguageSelect('en')}
+            onPress={() => handleSelect('en')}
             activeOpacity={0.7}
           >
             <Text style={styles.languageTitle}>English</Text>
@@ -64,7 +68,7 @@ const LanguageScreen: React.FC = () => {
               styles.languageCard,
               selectedLanguage === 'si' && styles.selectedCard,
             ]}
-            onPress={() => handleLanguageSelect('si')}
+            onPress={() => handleSelect('si')}
             activeOpacity={0.7}
           >
             <Text style={styles.languageTitle}>සිංහල</Text>
@@ -85,7 +89,7 @@ const LanguageScreen: React.FC = () => {
         <View style={styles.bottomContainer}>
           <Button
             title="Continue"
-            onPress={() => navigation.navigate('Login')}
+            onPress={handleContinue}
             size="large"
             disabled={!selectedLanguage}
           />

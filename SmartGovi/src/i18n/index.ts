@@ -6,7 +6,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import en from './locales/en.json';
 import si from './locales/si.json';
 
-export const LANGUAGE_KEY = '@smart_govi_language';
+// Use the same key as STORAGE_KEYS.LANGUAGE in constants.ts
+export const LANGUAGE_KEY = '@language';
 export type SupportedLanguage = 'en' | 'si';
 
 const getInitialLanguage = async (): Promise<SupportedLanguage> => {

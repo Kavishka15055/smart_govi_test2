@@ -13,6 +13,8 @@ import { COLORS, FONTS } from '../../utils/constants';
 import { AuthStackParamList } from '../../types';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '../../utils/constants';
 
 type SplashScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Splash'>;
 
@@ -50,10 +52,12 @@ const SplashScreen: React.FC = () => {
     }).start();
 
     // Navigate after animation
-    setTimeout(() => {
+    setTimeout(async () => {
       if (user) {
+        // Already logged in, go to main app
         navigation.replace('Main' as any);
       } else {
+        // Always show language selection before login
         navigation.replace('Language');
       }
     }, 2500);
