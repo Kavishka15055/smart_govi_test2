@@ -374,7 +374,7 @@ const ProfileScreen: React.FC = () => {
               <View style={styles.actionIconContainer}>
                 <MaterialIcons name="info-outline" size={22} color={COLORS.primary} />
               </View>
-              <Text style={styles.actionItemText}>About GoviGanana</Text>
+              <Text style={styles.actionItemText}>About Smart Govi</Text>
               <MaterialIcons name="chevron-right" size={24} color={COLORS.border} />
             </TouchableOpacity>
           </View>
@@ -386,12 +386,12 @@ const ProfileScreen: React.FC = () => {
             onPress={handleLogout}
           >
             <MaterialIcons name="logout" size={24} color={COLORS.error} />
-            <Text style={styles.logoutText}>Logout from SmartGovi</Text>
+            <Text style={styles.logoutText}>Logout from Smart Govi</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.versionText}>GoviGanana v1.0.0</Text>
+          <Text style={styles.versionText}>Smart Govi v1.0.0</Text>
           <Text style={styles.tagline}>Your Farm Financial Companion</Text>
         </View>
       </ScrollView>
@@ -408,7 +408,7 @@ const ProfileScreen: React.FC = () => {
             <View style={styles.modalLogoContainer}>
               <MaterialIcons name="agriculture" size={48} color={COLORS.primary} />
             </View>
-            <Text style={styles.modalTitle}>GoviGanana</Text>
+            <Text style={styles.modalTitle}>Smart Govi</Text>
             <Text style={styles.modalVersion}>Version 1.0.0</Text>
             
             <View style={styles.modalDivider} />
@@ -421,7 +421,7 @@ const ProfileScreen: React.FC = () => {
             </Text>
             
             <Text style={styles.modalCopyright}>
-              © {new Date().getFullYear()} GoviGanana. All rights reserved.
+              © {new Date().getFullYear()} Smart Govi. All rights reserved.
             </Text>
 
             <TouchableOpacity 

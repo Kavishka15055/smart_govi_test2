@@ -111,7 +111,7 @@ const DashboardScreen: React.FC = () => {
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.headerTitle}>GoviGanana</Text>
+          <Text style={styles.headerTitle}>Smart Govi</Text>
           <Text style={styles.headerDate}>{dateRangeLabel}</Text>
         </View>
         <TouchableOpacity
