@@ -24,12 +24,8 @@ const DashboardStackNavigator = () => {
   return (
     <DashboardStack.Navigator screenOptions={{ headerShown: false }}>
       <DashboardStack.Screen name="DashboardMain" component={DashboardScreen} />
-      <DashboardStack.Screen name="AddIncome" component={AddIncomeScreen} />
-      <DashboardStack.Screen name="AddExpense" component={AddExpenseScreen} />
       <DashboardStack.Screen name="Report" component={ReportScreen} />
       <DashboardStack.Screen name="History" component={HistoryScreen} />
-      <DashboardStack.Screen name="TransactionDetail" component={TransactionDetailScreen} />
-      <DashboardStack.Screen name="Settings" component={SettingsScreen} />
     </DashboardStack.Navigator>
   );
 };

@@ -11,6 +11,12 @@ import AuthStack from './AuthStack';
 import FarmSetupStack from './FarmSetupStack';
 import MainTabNavigator from './MainTabNavigator';
 
+// Import shared screens
+import AddIncomeScreen from '../screens/main/AddIncomeScreen';
+import AddExpenseScreen from '../screens/main/AddExpenseScreen';
+import TransactionDetailScreen from '../screens/main/TransactionDetailScreen';
+import SettingsScreen from '../screens/main/SettingsScreen';
+
 const Stack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator: React.FC = () => {
@@ -50,7 +56,13 @@ const AppNavigator: React.FC = () => {
         ) : !farmSetupComplete ? (
           <Stack.Screen name="FarmSetup" component={FarmSetupStack} />
         ) : (
-          <Stack.Screen name="Main" component={MainTabNavigator} />
+          <>
+            <Stack.Screen name="Main" component={MainTabNavigator} />
+            <Stack.Screen name="AddIncome" component={AddIncomeScreen} />
+            <Stack.Screen name="AddExpense" component={AddExpenseScreen} />
+            <Stack.Screen name="TransactionDetail" component={TransactionDetailScreen} />
+            <Stack.Screen name="Settings" component={SettingsScreen} />
+          </>
         )}
       </Stack.Navigator>
     </NavigationContainer>

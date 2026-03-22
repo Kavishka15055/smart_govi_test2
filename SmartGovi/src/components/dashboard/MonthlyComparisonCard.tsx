@@ -9,9 +9,15 @@ const screenWidth = Dimensions.get('window').width - 32;
 
 interface MonthlyComparisonCardProps {
   data: MonthlyData[];
+  title?: string;
+  label?: string;
 }
 
-const MonthlyComparisonCard: React.FC<MonthlyComparisonCardProps> = ({ data }) => {
+const MonthlyComparisonCard: React.FC<MonthlyComparisonCardProps> = ({ 
+  data, 
+  title = "MONTHLY COMPARISON",
+  label = "Month"
+}) => {
   if (!data || data.length === 0) return null;
 
   const chartData = {
@@ -60,7 +66,7 @@ const MonthlyComparisonCard: React.FC<MonthlyComparisonCardProps> = ({ data }) =
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>MONTHLY COMPARISON</Text>
+      <Text style={styles.title}>{title}</Text>
       
       <BarChart
         style={styles.chart}
@@ -77,7 +83,7 @@ const MonthlyComparisonCard: React.FC<MonthlyComparisonCardProps> = ({ data }) =
 
       <View style={styles.table}>
         <View style={styles.tableHeader}>
-          <Text style={[styles.columnHeader, { flex: 1.5 }]}>Month</Text>
+          <Text style={[styles.columnHeader, { flex: 1.5 }]}>{label}</Text>
           <Text style={[styles.columnHeader, { flex: 2, textAlign: 'right' }]}>Income</Text>
           <Text style={[styles.columnHeader, { flex: 2, textAlign: 'right' }]}>Expense</Text>
           <Text style={[styles.columnHeader, { flex: 2, textAlign: 'right' }]}>Balance</Text>

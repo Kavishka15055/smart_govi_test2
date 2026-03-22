@@ -145,7 +145,11 @@ const ReportScreen: React.FC = () => {
           )}
 
           {settings.showMonthlyComparison && summary && summary.monthlyComparison && (
-            <MonthlyComparisonCard data={summary.monthlyComparison} />
+            <MonthlyComparisonCard 
+              data={summary.monthlyComparison} 
+              title={currentRange === 'week' ? "INCOME COMPARISON" : "MONTHLY COMPARISON"}
+              label={currentRange === 'week' ? "Day" : "Month"}
+            />
           )}
 
           {summary && summary.incomeBreakdown && (

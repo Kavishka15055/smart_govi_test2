@@ -17,11 +17,11 @@ import {
   getCountFromServer,
 } from 'firebase/firestore';
 import { 
-  format, 
-  startOfMonth, 
-  endOfMonth, 
+  format,
   eachMonthOfInterval, 
   isSameMonth, 
+  isSameDay,
+  eachDayOfInterval,
   subMonths,
   differenceInDays
 } from 'date-fns';
@@ -328,8 +328,34 @@ class TransactionService {
             balance: monthIncome - monthExpense,
           };
         });
+      } else if (daysDiff >= 1 && daysDiff <= 7) {
+        // Daily Comparison for weekly view
+        const days = eachDayOfInterval({
+          start: startDate,
+          end: endDate,
+        });
 
-        // Calculate percentage changes
+        monthlyComparison = days.map((dayDate) => {
+          const dayIncome = income
+            .filter(item => isSameDay(item.date, dayDate))
+            .reduce((sum, item) => sum + item.amount, 0);
+          
+          const dayExpense = expenses
+            .filter(item => isSameDay(item.date, dayDate))
+            .reduce((sum, item) => sum + item.amount, 0);
+
+          return {
+            month: format(dayDate, 'EEE'), // Mon, Tue, etc.
+            year: dayDate.getFullYear(),
+            income: dayIncome,
+            expense: dayExpense,
+            balance: dayIncome - dayExpense,
+          };
+        });
+      }
+
+      // Calculate percentage changes if comparison data exists
+      if (monthlyComparison && monthlyComparison.length > 1) {
         for (let i = 1; i < monthlyComparison.length; i++) {
           const prev = monthlyComparison[i - 1];
           const curr = monthlyComparison[i];
