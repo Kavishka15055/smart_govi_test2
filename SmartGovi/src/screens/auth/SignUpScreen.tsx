@@ -61,8 +61,7 @@ const SignUpScreen: React.FC = () => {
 
     try {
       await signUp(formData);
-      // Navigate to Farm Setup after successful signup
-      navigation.navigate('FarmSetup');
+      // Navigation is handled automatically by AppNavigator based on auth state
     } catch (error: any) {
       const errorMessage = getLocalizedError(error, t);
       Alert.alert(t('auth.signup') + ' ' + t('common.error'), errorMessage);

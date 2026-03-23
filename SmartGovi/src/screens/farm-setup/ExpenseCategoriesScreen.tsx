@@ -28,7 +28,7 @@ type ExpenseCategoriesScreenNavigationProp = StackNavigationProp<FarmSetupStackP
 
 const ExpenseCategoriesScreen: React.FC = () => {
   const navigation = useNavigation<ExpenseCategoriesScreenNavigationProp>();
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const { 
     state, 
     updateExpenseCategory, 
@@ -69,12 +69,9 @@ const ExpenseCategoriesScreen: React.FC = () => {
         [
           {
             text: 'Go to Dashboard',
-            onPress: () => {
-              // Navigate to main app
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'Main' as any }],
-              });
+            onPress: async () => {
+              // Trigger AppNavigator re-check by updating user context
+              await updateUser({});
             },
           },
         ]
