@@ -1,5 +1,4 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { User as FirebaseUser } from 'firebase/auth';
 import { authService } from '../services/authService';
 import { User, AuthState } from '../types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedError } from '../utils/errors';
 
 interface AuthContextType extends AuthState {
-  login: (email: string, password: string, rememberMe: boolean) => Promise<void>;
+  login: (phoneNumber: string, password: string, rememberMe: boolean) => Promise<void>;
   signUp: (userData: any) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
@@ -44,49 +43,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const savedUser = await AsyncStorage.getItem('user');
       if (savedUser) {
-        setState({
-          user: JSON.parse(savedUser),
-          isLoading: false,
-          error: null,
-        });
+        setState({ user: JSON.parse(savedUser), isLoading: false, error: null });
       } else {
-        setState({
-          user: null,
-          isLoading: false,
-          error: null,
-        });
+        setState({ user: null, isLoading: false, error: null });
       }
     } catch (error) {
-      setState({
-        user: null,
-        isLoading: false,
-        error: 'Failed to restore session',
-      });
+      setState({ user: null, isLoading: false, error: 'Failed to restore session' });
     }
   };
 
-  const login = async (email: string, password: string, rememberMe: boolean) => {
+  const login = async (phoneNumber: string, password: string, rememberMe: boolean) => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
-      const user = await authService.login(email, password);
-      
+      const user = await authService.login(phoneNumber, password);
       if (rememberMe) {
         await AsyncStorage.setItem('user', JSON.stringify(user));
       }
-      
-      setState({
-        user,
-        isLoading: false,
-        error: null,
-      });
+      setState({ user, isLoading: false, error: null });
     } catch (error: any) {
       const errorMessage = getLocalizedError(error, t);
-
-      setState({
-        user: null,
-        isLoading: false,
-        error: errorMessage,
-      });
+      setState({ user: null, isLoading: false, error: errorMessage });
       throw error;
     }
   };
@@ -95,20 +71,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
       const user = await authService.signUp(userData);
-      
-      setState({
-        user,
-        isLoading: false,
-        error: null,
-      });
+      setState({ user, isLoading: false, error: null });
     } catch (error: any) {
       const errorMessage = getLocalizedError(error, t);
-
-      setState({
-        user: null,
-        isLoading: false,
-        error: errorMessage,
-      });
+      setState({ user: null, isLoading: false, error: errorMessage });
       throw error;
     }
   };
@@ -118,17 +84,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await authService.logout();
       await AsyncStorage.removeItem('user');
-      setState({
-        user: null,
-        isLoading: false,
-        error: null,
-      });
+      setState({ user: null, isLoading: false, error: null });
     } catch (error: any) {
-      setState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: error.message || 'Logout failed',
-      }));
+      setState(prev => ({ ...prev, isLoading: false, error: error.message || 'Logout failed' }));
     }
   };
 
@@ -138,19 +96,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const updateUser = async (data: Partial<User>) => {
     if (!state.user) return;
-    
     try {
       const updatedUser = { ...state.user, ...data };
       await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
-      setState(prev => ({
-        ...prev,
-        user: updatedUser
-      }));
+      setState(prev => ({ ...prev, user: updatedUser }));
     } catch (error) {
       console.error('Failed to update user context:', error);
       throw error;
     }
   };
+
 
   return (
     <AuthContext.Provider

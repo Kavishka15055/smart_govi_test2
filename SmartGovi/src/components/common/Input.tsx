@@ -24,6 +24,7 @@ interface InputProps {
   editable?: boolean;
   multiline?: boolean;
   numberOfLines?: number;
+  maxLength?: number;
   style?: ViewStyle;
   inputStyle?: TextStyle;
   onBlur?: () => void;
@@ -43,6 +44,7 @@ const Input: React.FC<InputProps> = ({
   editable = true,
   multiline = false,
   numberOfLines = 1,
+  maxLength,
   style,
   inputStyle,
   onBlur,
@@ -105,6 +107,7 @@ const Input: React.FC<InputProps> = ({
           editable={editable}
           multiline={multiline}
           numberOfLines={numberOfLines}
+          maxLength={maxLength}
           onFocus={handleFocus}
           onBlur={handleBlur}
         />

@@ -3,7 +3,7 @@ export interface User {
   id: string;
   fullName: string;
   phoneNumber: string;
-  email: string;
+  email?: string; // optional — not required for phone-number auth
   farmName?: string;
   location?: string;
   profilePhotoUrl?: string;
@@ -39,7 +39,7 @@ export type RootStackParamList = {
 
 // Form data types
 export interface LoginFormData {
-  email: string;
+  phoneNumber: string;
   password: string;
   rememberMe: boolean;
 }
@@ -47,7 +47,6 @@ export interface LoginFormData {
 export interface SignUpFormData {
   fullName: string;
   phoneNumber: string;
-  email: string;
   password: string;
   confirmPassword: string;
 }
