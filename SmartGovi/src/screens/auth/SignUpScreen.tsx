@@ -15,7 +15,7 @@ import { COLORS, FONTS } from '../../utils/constants';
 import { AuthStackParamList, SignUpFormData } from '../../types';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
-import { validateSignUpForm, validatePhoneNumber } from '../../utils/validators';
+import { validateSignUpForm } from '../../utils/validators';
 import { getLocalizedError } from '../../utils/errors';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
@@ -23,37 +23,38 @@ import Header from '../../components/common/Header';
 
 type SignUpScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'SignUp'>;
 
+// Sign up directly with mobile number and password
+
 const SignUpScreen: React.FC = () => {
   const navigation = useNavigation<SignUpScreenNavigationProp>();
   const { t } = useTranslation();
   const { signUp, isLoading } = useAuth();
 
+
+  // Step 1: form data
   const [formData, setFormData] = useState<SignUpFormData>({
     fullName: '',
     phoneNumber: '',
-    email: '',
     password: '',
     confirmPassword: '',
   });
-
   const [errors, setErrors] = useState<Record<string, string>>({});
+
 
   const handleChange = (field: keyof SignUpFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear error for this field
     if (errors[field]) {
       setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
+        const updated = { ...prev };
+        delete updated[field];
+        return updated;
       });
     }
   };
 
+  // Sign Up
   const handleSignUp = async () => {
-    // Validate form
     const validation = validateSignUpForm(formData);
-    
     if (!validation.isValid) {
       setErrors(validation.errors);
       return;
@@ -61,28 +62,30 @@ const SignUpScreen: React.FC = () => {
 
     try {
       await signUp(formData);
-      // Navigation is handled automatically by AppNavigator based on auth state
+      // Navigation handled by AppNavigator via auth state change
     } catch (error: any) {
       const errorMessage = getLocalizedError(error, t);
-      Alert.alert(t('auth.signup') + ' ' + t('common.error'), errorMessage);
+      Alert.alert(t('auth.signup'), errorMessage);
     }
   };
 
+
+  // ─── Step 1: Sign Up Details ─────────────────────────────────────────────────
   return (
     <SafeAreaView style={styles.container}>
       <Header title={t('dashboard.title')} showBack onBackPress={() => navigation.goBack()} />
-      
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <View style={styles.content}>
-            <Text style={styles.title}>{t('auth.signup')}</Text>
-            <Text style={styles.subtitle}>{t('splash.tagline')}</Text>
+            <View style={styles.headerSection}>
+              <Text style={styles.emoji}>🌾</Text>
+              <Text style={styles.title}>{t('auth.signup')}</Text>
+              <Text style={styles.subtitle}>{t('auth.signupSubtitle')}</Text>
+            </View>
 
             <View style={styles.form}>
               <Input
@@ -95,24 +98,14 @@ const SignUpScreen: React.FC = () => {
               />
 
               <Input
-                label={t('auth.phoneNumber')}
+                label={t('auth.mobileNumber')}
                 value={formData.phoneNumber}
                 onChangeText={(text) => handleChange('phoneNumber', text)}
                 placeholder="07XXXXXXXX"
                 keyboardType="phone-pad"
                 icon="phone"
+                maxLength={10}
                 error={errors.phoneNumber ? t(errors.phoneNumber) : undefined}
-              />
-
-              <Input
-                label={t('auth.email')}
-                value={formData.email}
-                onChangeText={(text) => handleChange('email', text)}
-                placeholder={t('auth.email')}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                icon="email"
-                error={errors.email ? t(errors.email) : undefined}
               />
 
               <Input
@@ -141,15 +134,12 @@ const SignUpScreen: React.FC = () => {
                 size="large"
                 loading={isLoading}
                 disabled={isLoading}
-                style={styles.signUpButton}
+                style={styles.primaryButton}
               />
 
               <View style={styles.loginContainer}>
                 <Text style={styles.loginText}>{t('auth.haveAccount')} </Text>
-                <Text
-                  style={styles.loginLink}
-                  onPress={() => navigation.navigate('Login')}
-                >
+                <Text style={styles.loginLink} onPress={() => navigation.navigate('Login')}>
                   {t('auth.login')}
                 </Text>
               </View>
@@ -162,22 +152,12 @@ const SignUpScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.white,
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 20,
-  },
+  container: { flex: 1, backgroundColor: COLORS.white },
+  keyboardView: { flex: 1 },
+  scrollContent: { flexGrow: 1 },
+  content: { flex: 1, paddingHorizontal: 20, paddingTop: 20, paddingBottom: 20 },
+  headerSection: { alignItems: 'center', marginBottom: 32 },
+  emoji: { fontSize: 52, marginBottom: 12 },
   title: {
     fontFamily: FONTS.bold,
     fontSize: FONTS.sizes.xxlarge,
@@ -190,20 +170,11 @@ const styles = StyleSheet.create({
     fontSize: FONTS.sizes.medium,
     color: COLORS.text.secondary,
     textAlign: 'center',
-    marginBottom: 30,
   },
-  form: {
-    width: '100%',
-  },
-  signUpButton: {
-    marginTop: 20,
-    marginBottom: 16,
-  },
-  loginContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 20,
-  },
+  form: { width: '100%' },
+  primaryButton: { marginTop: 20, marginBottom: 12 },
+  secondaryButton: { marginBottom: 8 },
+  loginContainer: { flexDirection: 'row', justifyContent: 'center', marginTop: 20 },
   loginText: {
     fontFamily: FONTS.regular,
     fontSize: FONTS.sizes.medium,

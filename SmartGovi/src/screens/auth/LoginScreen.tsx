@@ -15,9 +15,9 @@ import { useTranslation } from 'react-i18next';
 import { COLORS, FONTS } from '../../utils/constants';
 import { AuthStackParamList } from '../../types';
 import { useAuth } from '../../context/AuthContext';
+import { validateLoginForm } from '../../utils/validators';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
-import LoadingSpinner from '../../components/common/LoadingSpinner';
 import Header from '../../components/common/Header';
 
 type LoginScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Login'>;
@@ -27,66 +27,55 @@ const LoginScreen: React.FC = () => {
   const { t } = useTranslation();
   const { login, isLoading, error, clearError } = useAuth();
 
-  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-
-  const validateForm = (): boolean => {
-    let isValid = true;
-    
-    if (!email) {
-      setEmailError(t('auth.emailRequired'));
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailError(t('auth.invalidEmailFormat'));
-      isValid = false;
-    } else {
-      setEmailError('');
-    }
-    
-    if (!password) {
-      setPasswordError(t('auth.passwordRequired'));
-      isValid = false;
-    } else {
-      setPasswordError('');
-    }
-    
-    return isValid;
-  };
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleLogin = async () => {
-    if (!validateForm()) return;
-    
+    const validation = validateLoginForm({ phoneNumber, password });
+    if (!validation.isValid) {
+      setErrors(validation.errors);
+      return;
+    }
+    setErrors({});
+
     try {
-      await login(email, password, rememberMe);
-      // Navigation will happen automatically based on auth state
+      await login(phoneNumber, password, rememberMe);
     } catch (err) {
-      // Error is handled in context
+      // Error handled in context
     }
   };
 
-  const handleForgotPassword = () => {
-    // Navigate to forgot password screen
-    console.log('Forgot password');
+  const handleChange = (field: string, value: string) => {
+    if (field === 'phoneNumber') setPhoneNumber(value);
+    if (field === 'password') setPassword(value);
+    if (errors[field]) {
+      setErrors(prev => {
+        const updated = { ...prev };
+        delete updated[field];
+        return updated;
+      });
+    }
+    clearError();
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <Header title={t('dashboard.title')} showBack onBackPress={() => navigation.goBack()} />
-      
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <View style={styles.content}>
-            <Text style={styles.title}>{t('auth.login')}</Text>
-            <Text style={styles.subtitle}>{t('splash.tagline')}</Text>
+            {/* Header */}
+            <View style={styles.headerSection}>
+              <Text style={styles.emoji}>📱</Text>
+              <Text style={styles.title}>{t('auth.login')}</Text>
+              <Text style={styles.subtitle}>{t('auth.loginSubtitle')}</Text>
+            </View>
 
             {error && (
               <View style={styles.errorContainer}>
@@ -96,34 +85,27 @@ const LoginScreen: React.FC = () => {
 
             <View style={styles.form}>
               <Input
-                label={t('auth.email')}
-                value={email}
-                onChangeText={(text) => {
-                  setEmail(text);
-                  setEmailError('');
-                  clearError();
-                }}
-                placeholder={t('auth.email')}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                icon="email"
-                error={emailError}
+                label={t('auth.mobileNumber')}
+                value={phoneNumber}
+                onChangeText={(text) => handleChange('phoneNumber', text)}
+                placeholder="07XXXXXXXX"
+                keyboardType="phone-pad"
+                icon="phone"
+                error={errors.phoneNumber ? t(errors.phoneNumber) : undefined}
+                maxLength={10}
               />
 
               <Input
                 label={t('auth.password')}
                 value={password}
-                onChangeText={(text) => {
-                  setPassword(text);
-                  setPasswordError('');
-                  clearError();
-                }}
+                onChangeText={(text) => handleChange('password', text)}
                 placeholder={t('auth.password')}
                 secureTextEntry
                 icon="lock"
-                error={passwordError}
+                error={errors.password ? t(errors.password) : undefined}
               />
 
+              {/* Remember Me */}
               <TouchableOpacity
                 style={styles.rememberMeContainer}
                 onPress={() => setRememberMe(!rememberMe)}
@@ -142,12 +124,6 @@ const LoginScreen: React.FC = () => {
                 disabled={isLoading}
               />
 
-              <TouchableOpacity onPress={handleForgotPassword} style={styles.forgotButton}>
-                <Text style={styles.forgotText}>
-                  {t('auth.forgotPassword')}
-                </Text>
-              </TouchableOpacity>
-
               <View style={styles.signupContainer}>
                 <Text style={styles.signupText}>{t('auth.noAccount')} </Text>
                 <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
@@ -163,22 +139,12 @@ const LoginScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.white,
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 40,
-    paddingBottom: 20,
-  },
+  container: { flex: 1, backgroundColor: COLORS.white },
+  keyboardView: { flex: 1 },
+  scrollContent: { flexGrow: 1 },
+  content: { flex: 1, paddingHorizontal: 20, paddingTop: 20, paddingBottom: 20 },
+  headerSection: { alignItems: 'center', marginBottom: 36 },
+  emoji: { fontSize: 52, marginBottom: 12 },
   title: {
     fontFamily: FONTS.bold,
     fontSize: FONTS.sizes.xxlarge,
@@ -191,7 +157,6 @@ const styles = StyleSheet.create({
     fontSize: FONTS.sizes.medium,
     color: COLORS.text.secondary,
     textAlign: 'center',
-    marginBottom: 40,
   },
   errorContainer: {
     backgroundColor: COLORS.error + '20',
@@ -205,9 +170,7 @@ const styles = StyleSheet.create({
     color: COLORS.error,
     textAlign: 'center',
   },
-  form: {
-    width: '100%',
-  },
+  form: { width: '100%' },
   rememberMeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -223,33 +186,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  checkboxChecked: {
-    backgroundColor: COLORS.primary,
-  },
-  checkmark: {
-    color: COLORS.white,
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
+  checkboxChecked: { backgroundColor: COLORS.primary },
+  checkmark: { color: COLORS.white, fontSize: 14, fontWeight: 'bold' },
   rememberMeText: {
     fontFamily: FONTS.regular,
     fontSize: FONTS.sizes.small,
     color: COLORS.text.secondary,
   },
-  forgotButton: {
-    marginTop: 16,
-    alignItems: 'center',
-  },
-  forgotText: {
-    fontFamily: FONTS.regular,
-    fontSize: FONTS.sizes.small,
-    color: COLORS.primary,
-  },
-  signupContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 30,
-  },
+  signupContainer: { flexDirection: 'row', justifyContent: 'center', marginTop: 30 },
   signupText: {
     fontFamily: FONTS.regular,
     fontSize: FONTS.sizes.medium,
