@@ -85,7 +85,7 @@ const DashboardScreen: React.FC = () => {
         navigation.navigate('AddExpense');
         break;
       case 'Report':
-        navigation.navigate('Report', { range: currentRange });
+        navigation.navigate('ReportTab', { range: currentRange });
         break;
       case 'History':
         navigation.navigate('History');

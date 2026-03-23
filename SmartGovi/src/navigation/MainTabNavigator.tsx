@@ -24,8 +24,6 @@ const DashboardStackNavigator = () => {
   return (
     <DashboardStack.Navigator screenOptions={{ headerShown: false }}>
       <DashboardStack.Screen name="DashboardMain" component={DashboardScreen} />
-      <DashboardStack.Screen name="Report" component={ReportScreen} />
-      <DashboardStack.Screen name="History" component={HistoryScreen} />
     </DashboardStack.Navigator>
   );
 };
