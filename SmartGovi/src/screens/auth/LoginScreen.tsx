@@ -72,7 +72,7 @@ const LoginScreen: React.FC = () => {
           <View style={styles.content}>
             {/* Header */}
             <View style={styles.headerSection}>
-              <Text style={styles.emoji}>📱</Text>
+              
               <Text style={styles.title}>{t('auth.login')}</Text>
               <Text style={styles.subtitle}>{t('auth.loginSubtitle')}</Text>
             </View>
