@@ -266,7 +266,6 @@ const ProfileScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
           <Text style={styles.userFullName}>{user.fullName}</Text>
-          <Text style={styles.userEmail}>{user.email}</Text>
         </View>
 
         {/* Info Items List */}
@@ -277,13 +276,6 @@ const ProfileScreen: React.FC = () => {
               icon="phone" 
               label={t('profile.phoneNumber')} 
               value={formatPhoneNumber(user.phoneNumber)} 
-            />
-            <View style={styles.divider} />
-            <InfoItem 
-              icon="email" 
-              label={t('profile.emailAddress')} 
-              value={user.email} 
-              valueColor={COLORS.text.secondary}
             />
           </View>
         </View>

@@ -84,14 +84,6 @@ const EditProfileScreen: React.FC = () => {
       >
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           <Input
-            label="Email"
-            value={user?.email || ''}
-            onChangeText={() => {}}
-            icon="email"
-            editable={false}
-          />
-          
-          <Input
             label="Full Name"
             value={fullName}
             onChangeText={setFullName}
@@ -108,6 +100,7 @@ const EditProfileScreen: React.FC = () => {
             placeholder="Enter your phone number"
             keyboardType="phone-pad"
             icon="phone"
+            editable={false}
           />
 
           <Input

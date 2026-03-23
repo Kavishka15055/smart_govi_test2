@@ -79,11 +79,14 @@ const SplashScreen: React.FC = () => {
           },
         ]}
       >
-        <View style={styles.logoPlaceholder}>
-          <Text style={styles.logoEmoji}>🌾</Text>
-        </View>
+        <Image
+          source={require('../../../assets/images/logo.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
         <Text style={styles.appName}>Smart Govi</Text>
         <Text style={styles.appNameSinhala}>ස්මාර්ට් ගොවි</Text>
+        
       </Animated.View>
 
       <View style={styles.progressContainer}>
@@ -118,6 +121,11 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: 'center',
     marginBottom: 40,
+  },
+  logo: {
+    width: 250,
+    height: 250,
+    marginBottom: 20,
   },
   logoPlaceholder: {
     width: 120,
