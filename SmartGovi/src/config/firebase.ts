@@ -1,11 +1,10 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
+import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Your Firebase configuration
-// Replace with your own config from Firebase Console
 const firebaseConfig = {
   apiKey: "AIzaSyBmkVnBcx14TXeGKBnzC3jFDI-VIcmhMTc",
   authDomain: "loginapp-d967c.firebaseapp.com",
@@ -18,18 +17,17 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize services
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
-
-// Enable offline persistence for Firestore
-enableIndexedDbPersistence(db).catch((err) => {
-  if (err.code === 'failed-precondition') {
-    console.log('Offline persistence failed: Multiple tabs open');
-  } else if (err.code === 'unimplemented') {
-    console.log('Offline persistence not available in this browser');
-  }
+// Initialize services with persistence for React Native
+export const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage)
 });
+
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    tabManager: persistentMultipleTabManager()
+  })
+});
+
+export const storage = getStorage(app);
 
 export default app;
