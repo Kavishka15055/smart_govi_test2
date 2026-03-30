@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { MainTabParamList, DashboardStackParamList, ProfileStackParamList } from '../types';
 import { COLORS, FONTS } from '../utils/constants';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Import screens
 import DashboardScreen from '../screens/main/DashboardScreen';
@@ -43,6 +44,7 @@ const ProfileStackNavigator = () => {
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const MainTabNavigator: React.FC = () => {
+  const insets = useSafeAreaInsets();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -53,8 +55,8 @@ const MainTabNavigator: React.FC = () => {
           backgroundColor: COLORS.white,
           borderTopWidth: 1,
           borderTopColor: COLORS.border,
-          height: 60,
-          paddingBottom: 8,
+          height: 60 + insets.bottom,
+          paddingBottom: 8 + insets.bottom,
           paddingTop: 8,
         },
         tabBarLabelStyle: {
