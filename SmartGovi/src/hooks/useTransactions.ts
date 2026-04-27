@@ -70,6 +70,7 @@ export const useTransactions = () => {
           amount: data.amount,
           date: data.date.toDate(),
           quantity: data.quantity,
+          weight: data.weight,
           unit: data.unit,
           notes: data.notes,
         });

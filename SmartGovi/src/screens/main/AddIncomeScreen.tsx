@@ -43,6 +43,7 @@ const AddIncomeScreen: React.FC = () => {
     categoryId: editTransaction?.categoryId || '',
     categoryName: editTransaction?.categoryName || '',
     quantity: editTransaction?.quantity?.toString() || '',
+    weight: editTransaction?.weight?.toString() || '',
     unit: editTransaction?.unit || 'kg',
     amount: editTransaction?.amount?.toString() || '',
     notes: editTransaction?.notes || '',
@@ -104,6 +105,18 @@ const AddIncomeScreen: React.FC = () => {
     }
   };
 
+  const handleWeightChange = (value: string) => {
+    const sanitized = sanitizeQuantity(value);
+    setFormData({ ...formData, weight: sanitized });
+    if (errors.weight) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.weight;
+        return newErrors;
+      });
+    }
+  };
+
   const handleSubmit = async () => {
     // Validate form
     const validation = validateIncomeForm(formData);
@@ -130,6 +143,7 @@ const AddIncomeScreen: React.FC = () => {
           categoryId: formData.categoryId,
           categoryName: formData.categoryName,
           quantity: quantityNum,
+          weight: parseFloat(formData.weight),
           unit: formData.unit,
           amount: amountNum,
           notes: formData.notes.trim() || null,
@@ -141,6 +155,7 @@ const AddIncomeScreen: React.FC = () => {
           categoryId: formData.categoryId,
           categoryName: formData.categoryName,
           quantity: quantityNum,
+          weight: parseFloat(formData.weight),
           unit: formData.unit,
           amount: amountNum,
           notes: formData.notes.trim() || null,
@@ -169,6 +184,7 @@ const AddIncomeScreen: React.FC = () => {
       categoryId: '',
       categoryName: '',
       quantity: '',
+      weight: '',
       unit: 'kg',
       amount: '',
       notes: '',
@@ -189,6 +205,7 @@ const AddIncomeScreen: React.FC = () => {
       categoryId: '',
       categoryName: '',
       quantity: '',
+      weight: '',
       unit: 'kg',
       amount: '',
       notes: '',
@@ -233,13 +250,16 @@ const AddIncomeScreen: React.FC = () => {
               error={errors.category}
             />
 
-            {/* Quantity Input */}
+            {/* Quantity & Weight Input */}
             <QuantityInput
               quantity={formData.quantity}
+              weight={formData.weight}
               unit={formData.unit}
               onQuantityChange={handleQuantityChange}
+              onWeightChange={handleWeightChange}
               onUnitChange={(unit) => setFormData({ ...formData, unit })}
-              error={errors.quantity}
+              quantityError={errors.quantity}
+              weightError={errors.weight}
             />
 
             {/* Amount Input */}
