@@ -70,7 +70,9 @@ const RecentTransactionItem: React.FC<RecentTransactionItemProps> = ({
           </Text>
           {!!transaction.quantity && (
             <Text style={styles.quantity}>
-              {transaction.quantity} {transaction.unit}
+              {transaction.weight
+                ? `${transaction.quantity} × ${transaction.weight}${transaction.unit}`
+                : `${transaction.quantity} ${transaction.unit}`}
             </Text>
           )}
         </View>

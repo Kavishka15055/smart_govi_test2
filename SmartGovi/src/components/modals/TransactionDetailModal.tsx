@@ -116,7 +116,11 @@ const TransactionDetailModal: React.FC<TransactionDetailProps> = ({
                     <DetailRow
                       icon="straighten"
                       label="Quantity"
-                      value={`${transaction.quantity} ${transaction.unit}`}
+                      value={
+                        transaction.weight
+                          ? `${transaction.quantity} × ${transaction.weight}${transaction.unit}`
+                          : `${transaction.quantity} ${transaction.unit}`
+                      }
                     />
                   )}
 
