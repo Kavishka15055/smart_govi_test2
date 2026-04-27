@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { COLORS, FONTS } from '../../utils/constants';
 import Button from '../../components/common/Button';
@@ -25,6 +26,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   onApply,
   currentRange,
 }) => {
+  const insets = useSafeAreaInsets();
   const [selectedRange, setSelectedRange] = useState(currentRange);
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
@@ -58,7 +60,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.overlay}>
           <TouchableWithoutFeedback>
-            <View style={styles.content}>
+            <View style={[styles.content, { paddingBottom: Math.max(insets.bottom, 20) }]}>
               <View style={styles.header}>
                 <Text style={styles.title}>Filter</Text>
                 <TouchableOpacity onPress={onClose}>

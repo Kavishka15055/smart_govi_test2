@@ -8,6 +8,7 @@ import {
   FlatList,
   TextInput,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, FONTS } from '../../utils/constants';
 import { MaterialIcons } from '@expo/vector-icons';
 import { PickerCategory } from '../../types';
@@ -25,6 +26,7 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({
   onSelectCategory,
   error,
 }) => {
+  const insets = useSafeAreaInsets();
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -63,7 +65,7 @@ const CategoryPicker: React.FC<CategoryPickerProps> = ({
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <View style={[styles.modalContent, { paddingBottom: insets.bottom }]}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Select Category</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
