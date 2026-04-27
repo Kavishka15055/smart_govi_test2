@@ -203,6 +203,7 @@ export interface BaseTransaction {
 export interface IncomeTransaction extends BaseTransaction {
   type: 'income';
   quantity: number;
+  weight?: number;
   unit: string;
 }
 
@@ -283,6 +284,7 @@ export interface RecentTransactionDisplay {
   amount: number;
   date: Date;
   quantity?: number;
+  weight?: number;
   unit?: string;
   notes?: string | null;
 }
@@ -350,6 +352,7 @@ export interface IncomeFormData {
   categoryId: string;
   categoryName: string;
   quantity: string;
+  weight: string;
   unit: string;
   amount: string;
   notes: string;
@@ -410,6 +413,7 @@ export interface TransactionDisplay {
   amount: number;
   date: Date;
   quantity?: number;
+  weight?: number;
   unit?: string;
   notes?: string;
   receiptUrl?: string;

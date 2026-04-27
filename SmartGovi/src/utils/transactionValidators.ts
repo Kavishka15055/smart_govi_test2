@@ -18,6 +18,16 @@ export const validateIncomeForm = (data: IncomeFormData): ValidationResult => {
     }
   }
 
+  // Validate weight
+  if (!data.weight) {
+    errors.weight = 'Weight is required';
+  } else {
+    const weightNum = parseFloat(data.weight);
+    if (isNaN(weightNum) || weightNum <= 0) {
+      errors.weight = 'Weight must be greater than 0';
+    }
+  }
+
   // Validate amount
   if (!data.amount) {
     errors.amount = 'Amount is required';

@@ -145,7 +145,11 @@ const TransactionDetailScreen: React.FC = () => {
             <DetailItem
               icon="inventory"
               label={t('transactionDetail.quantity')}
-              value={`${transaction.quantity} ${transaction.unit}`}
+              value={
+                'weight' in transaction && transaction.weight
+                  ? `${transaction.quantity} × ${transaction.weight}${transaction.unit}`
+                  : `${transaction.quantity} ${transaction.unit}`
+              }
             />
           )}
 

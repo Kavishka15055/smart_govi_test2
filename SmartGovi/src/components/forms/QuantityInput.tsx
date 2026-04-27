@@ -10,31 +10,39 @@ import { COLORS, FONTS } from '../../utils/constants';
 
 interface QuantityInputProps {
   quantity: string;
+  weight: string;
   unit: string;
   availableUnits?: string[];
   onQuantityChange: (value: string) => void;
+  onWeightChange: (value: string) => void;
   onUnitChange: (unit: string) => void;
-  error?: string;
+  quantityError?: string;
+  weightError?: string;
 }
 
 const QuantityInput: React.FC<QuantityInputProps> = ({
   quantity,
+  weight,
   unit,
-  availableUnits = ['kg', 'g', 'dozen', 'piece', 'liter'],
+  availableUnits = ['kg', 'g'],
   onQuantityChange,
+  onWeightChange,
   onUnitChange,
-  error,
+  quantityError,
+  weightError,
 }) => {
   const [showUnitPicker, setShowUnitPicker] = React.useState(false);
 
+  const hasError = !!quantityError || !!weightError;
+
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Quantity</Text>
-      
-      <View style={styles.row}>
-        <View style={[styles.quantityContainer, error && styles.inputError]}>
+      {/* Quantity Row */}
+      <View style={styles.fieldGroup}>
+        <Text style={styles.label}>Quantity</Text>
+        <View style={[styles.inputContainer, quantityError && styles.inputError]}>
           <TextInput
-            style={styles.quantityInput}
+            style={styles.input}
             value={quantity}
             onChangeText={onQuantityChange}
             placeholder="0"
@@ -42,17 +50,37 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
             placeholderTextColor={COLORS.text.disabled}
           />
         </View>
-
-        <TouchableOpacity
-          style={[styles.unitContainer, error && styles.inputError]}
-          onPress={() => setShowUnitPicker(true)}
-        >
-          <Text style={styles.unitText}>{unit}</Text>
-          <Text style={styles.unitArrow}>▼</Text>
-        </TouchableOpacity>
+        {quantityError && <Text style={styles.errorText}>{quantityError}</Text>}
       </View>
-      
-      {error && <Text style={styles.errorText}>{error}</Text>}
+
+      {/* Weight Row */}
+      <View style={styles.weightRow}>
+        <View style={styles.weightField}>
+          <Text style={styles.label}>Weight per Unit</Text>
+          <View style={[styles.inputContainer, weightError && styles.inputError]}>
+            <TextInput
+              style={styles.input}
+              value={weight}
+              onChangeText={onWeightChange}
+              placeholder="0"
+              keyboardType="numeric"
+              placeholderTextColor={COLORS.text.disabled}
+            />
+          </View>
+          {weightError && <Text style={styles.errorText}>{weightError}</Text>}
+        </View>
+
+        <View style={styles.unitField}>
+          <Text style={styles.label}>Unit</Text>
+          <TouchableOpacity
+            style={[styles.unitContainer]}
+            onPress={() => setShowUnitPicker(!showUnitPicker)}
+          >
+            <Text style={styles.unitText}>{unit}</Text>
+            <Text style={styles.unitArrow}>▼</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
       {showUnitPicker && (
         <View style={styles.unitPicker}>
@@ -86,26 +114,43 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
   },
+  fieldGroup: {
+    marginBottom: 12,
+  },
   label: {
     fontFamily: FONTS.medium,
     fontSize: FONTS.sizes.small,
     color: COLORS.text.secondary,
     marginBottom: 6,
   },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  quantityContainer: {
-    flex: 2,
+  inputContainer: {
     borderWidth: 1,
     borderColor: COLORS.border,
     borderRadius: 8,
     backgroundColor: COLORS.white,
+  },
+  inputError: {
+    borderColor: COLORS.error,
+  },
+  input: {
+    fontFamily: FONTS.regular,
+    fontSize: FONTS.sizes.medium,
+    color: COLORS.text.primary,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+  },
+  weightRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  weightField: {
+    flex: 2,
     marginRight: 8,
   },
-  unitContainer: {
+  unitField: {
     flex: 1,
+  },
+  unitContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -113,16 +158,6 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     borderRadius: 8,
     backgroundColor: COLORS.white,
-    paddingHorizontal: 12,
-    paddingVertical: 14,
-  },
-  inputError: {
-    borderColor: COLORS.error,
-  },
-  quantityInput: {
-    fontFamily: FONTS.regular,
-    fontSize: FONTS.sizes.medium,
-    color: COLORS.text.primary,
     paddingHorizontal: 12,
     paddingVertical: 14,
   },
